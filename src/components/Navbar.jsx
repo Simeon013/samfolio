@@ -57,7 +57,7 @@ export default function Navbar() {
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
-                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
+                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 cursor-pointer ${
                   isActive ? 'text-white shadow-md' : 'text-black/40 hover:text-black/80 hover:bg-black/5'
                 }`}
                 style={isActive ? { backgroundColor: accent } : {}}
@@ -77,7 +77,7 @@ export default function Navbar() {
             
            <button
              onClick={() => setMobileOpen(!mobileOpen)}
-             className="p-3 rounded-full hover:bg-black/5 transition-colors"
+             className="p-3 rounded-full hover:bg-black/5 transition-colors cursor-pointer"
              style={mobileOpen ? { color: accent, backgroundColor: `${accent}15` } : {}}
            >
              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
