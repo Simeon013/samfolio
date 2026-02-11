@@ -1,0 +1,704 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard, Type, UserCircle, Wrench, FolderKanban, Award,
+  Briefcase, GraduationCap, Mail, Settings, LogOut, Save, Plus,
+  Trash2, GripVertical, ChevronDown, ChevronRight, Upload, Eye,
+  Palette, Globe, RefreshCw, Download, FileUp
+} from 'lucide-react';
+import { usePortfolioData } from '../hooks/usePortfolioData';
+
+const sections = [
+  { id: 'hero', label: 'Hero / Accueil', icon: Type },
+  { id: 'about', label: 'À Propos', icon: UserCircle },
+  { id: 'skills', label: 'Compétences', icon: Wrench },
+  { id: 'projects', label: 'Projets', icon: FolderKanban },
+  { id: 'certifications', label: 'Certifications', icon: Award },
+  { id: 'experience', label: 'Expérience', icon: Briefcase },
+  { id: 'education', label: 'Formation', icon: GraduationCap },
+  { id: 'contact', label: 'Contact', icon: Mail },
+  { id: 'settings', label: 'Paramètres', icon: Settings },
+];
+
+export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const { data, updateSection, updateSettings, resetData, exportData, importData } = usePortfolioData();
+  const [activeSection, setActiveSection] = useState('hero');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [saved, setSaved] = useState(false);
+  const accent = data.settings?.accentColor || '#0066FF';
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('samfolio_admin')) {
+      navigate('/admin');
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('samfolio_admin');
+    navigate('/admin');
+  };
+
+  const showSaved = () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleImport = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (importData(ev.target.result)) showSaved();
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
+  return (
+    <div className="min-h-screen bg-[var(--color-bg-primary)] flex">
+      {/* Sidebar */}
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white border-r border-[var(--color-border)] flex flex-col transition-all duration-300 shrink-0`}>
+        <div className="p-4 border-b border-[var(--color-border)] flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
+            style={{ backgroundColor: accent }}>S</div>
+          {sidebarOpen && <span className="font-bold text-sm truncate">Admin Panel</span>}
+        </div>
+
+        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+          {sections.map(({ id, label, icon: Icon }) => (
+            <button key={id} onClick={() => setActiveSection(id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                activeSection === id
+                  ? 'text-white'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)]'
+              }`}
+              style={activeSection === id ? { backgroundColor: accent } : {}}>
+              <Icon size={18} className="shrink-0" />
+              {sidebarOpen && <span className="truncate">{label}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="p-2 border-t border-[var(--color-border)] space-y-1">
+          <a href="/" target="_blank"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-all">
+            <Eye size={18} className="shrink-0" />
+            {sidebarOpen && <span>Voir le site</span>}
+          </a>
+          <button onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all cursor-pointer">
+            <LogOut size={18} className="shrink-0" />
+            {sidebarOpen && <span>Déconnexion</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-[var(--color-border)] px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] cursor-pointer">
+              <LayoutDashboard size={18} />
+            </button>
+            <h1 className="text-lg font-bold">
+              {sections.find(s => s.id === activeSection)?.label}
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            {saved && (
+              <span className="text-sm text-emerald-600 font-medium animate-pulse">✓ Sauvegardé</span>
+            )}
+            <button onClick={exportData}
+              className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] cursor-pointer" title="Exporter">
+              <Download size={18} />
+            </button>
+            <button onClick={handleImport}
+              className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] cursor-pointer" title="Importer">
+              <FileUp size={18} />
+            </button>
+          </div>
+        </header>
+
+        <div className="p-6 max-w-4xl">
+          {activeSection === 'hero' && <HeroEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'about' && <AboutEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'skills' && <SkillsEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'projects' && <ProjectsEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'certifications' && <CertsEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'experience' && <ExperienceEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'education' && <EducationEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'contact' && <ContactEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
+          {activeSection === 'settings' && <SettingsEditor data={data} updateSettings={updateSettings} updateSection={updateSection} accent={accent} onSave={showSaved} resetData={resetData} />}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+/* --- INPUT HELPERS --- */
+function Field({ label, value, onChange, type = 'text', placeholder, textarea, rows = 3 }) {
+  const Tag = textarea ? 'textarea' : 'input';
+  return (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">{label}</label>
+      <Tag type={type} value={value || ''} onChange={(e) => onChange(e.target.value)} rows={textarea ? rows : undefined}
+        className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm focus:outline-none transition-colors resize-none"
+        placeholder={placeholder} />
+    </div>
+  );
+}
+
+function Card({ children, title, className = '' }) {
+  return (
+    <div className={`bg-white rounded-2xl border border-[var(--color-border)] p-6 mb-4 ${className}`}>
+      {title && <h3 className="text-sm font-bold text-[var(--color-text-secondary)] mb-4">{title}</h3>}
+      {children}
+    </div>
+  );
+}
+
+function SaveBtn({ onClick, accent }) {
+  return (
+    <button onClick={onClick}
+      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold cursor-pointer transition-all hover:shadow-lg"
+      style={{ backgroundColor: accent }}>
+      <Save size={16} /> Sauvegarder
+    </button>
+  );
+}
+
+/* --- HERO EDITOR --- */
+function HeroEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.hero);
+  const save = () => { updateSection('hero', local); onSave(); };
+  return (
+    <>
+      <Card title="Informations principales">
+        <Field label="Nom complet" value={local.name} onChange={(v) => setLocal({ ...local, name: v })} />
+        <Field label="Titre" value={local.title} onChange={(v) => setLocal({ ...local, title: v })} />
+        <Field label="Sous-titre" value={local.subtitle} onChange={(v) => setLocal({ ...local, subtitle: v })} />
+        <Field label="Localisation" value={local.location} onChange={(v) => setLocal({ ...local, location: v })} />
+      </Card>
+      <Card title="Boutons d'action">
+        <Field label="CTA primaire" value={local.cta1} onChange={(v) => setLocal({ ...local, cta1: v })} />
+        <Field label="CTA secondaire" value={local.cta2} onChange={(v) => setLocal({ ...local, cta2: v })} />
+      </Card>
+      <SaveBtn onClick={save} accent={accent} />
+    </>
+  );
+}
+
+/* --- ABOUT EDITOR --- */
+function AboutEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.about);
+
+  const updateStat = (i, key, val) => {
+    const stats = [...local.stats];
+    stats[i] = { ...stats[i], [key]: key === 'value' ? Number(val) || 0 : val };
+    setLocal({ ...local, stats });
+  };
+
+  const handlePhoto = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setLocal({ ...local, photo: ev.target.result });
+    reader.readAsDataURL(file);
+  };
+
+  const save = () => { updateSection('about', local); onSave(); };
+  return (
+    <>
+      <Card title="Photo de profil">
+        <div className="flex items-center gap-4">
+          {local.photo && <img src={local.photo} alt="" className="w-20 h-20 rounded-xl object-cover" />}
+          <label className="px-4 py-2 rounded-xl bg-[var(--color-bg-secondary)] text-sm font-medium cursor-pointer hover:bg-[var(--color-border)] transition-colors">
+            <Upload size={16} className="inline mr-2" />Changer la photo
+            <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
+          </label>
+        </div>
+      </Card>
+      <Card title="Biographie">
+        <Field label="Texte de présentation" value={local.bio} onChange={(v) => setLocal({ ...local, bio: v })} textarea rows={5} />
+      </Card>
+      <Card title="Chiffres clés">
+        {local.stats.map((s, i) => (
+          <div key={i} className="flex gap-3 mb-3">
+            <div className="w-20">
+              <Field label="Valeur" value={s.value} onChange={(v) => updateStat(i, 'value', v)} type="number" />
+            </div>
+            <div className="w-16">
+              <Field label="Suffixe" value={s.suffix} onChange={(v) => updateStat(i, 'suffix', v)} />
+            </div>
+            <div className="flex-1">
+              <Field label="Label" value={s.label} onChange={(v) => updateStat(i, 'label', v)} />
+            </div>
+          </div>
+        ))}
+      </Card>
+      <Card title="Soft Skills">
+        <div className="flex flex-wrap gap-2 mb-3">
+          {local.softSkills.map((s, i) => (
+            <span key={i} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-bg-secondary)] text-sm">
+              {s}
+              <button onClick={() => setLocal({ ...local, softSkills: local.softSkills.filter((_, j) => j !== i) })}
+                className="ml-1 text-[var(--color-text-muted)] hover:text-red-500 cursor-pointer"><Trash2 size={12} /></button>
+            </span>
+          ))}
+        </div>
+        <button onClick={() => {
+          const skill = prompt('Nouveau soft skill:');
+          if (skill) setLocal({ ...local, softSkills: [...local.softSkills, skill] });
+        }} className="text-sm font-medium cursor-pointer flex items-center gap-1" style={{ color: accent }}>
+          <Plus size={14} /> Ajouter
+        </button>
+      </Card>
+      <SaveBtn onClick={save} accent={accent} />
+    </>
+  );
+}
+
+/* --- SKILLS EDITOR --- */
+function SkillsEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.skills);
+  const [openCat, setOpenCat] = useState(0);
+
+  const updateItem = (ci, ii, key, val) => {
+    const cats = [...local];
+    const items = [...cats[ci].items];
+    items[ii] = { ...items[ii], [key]: key === 'level' ? Number(val) || 0 : val };
+    cats[ci] = { ...cats[ci], items };
+    setLocal(cats);
+  };
+
+  const addItem = (ci) => {
+    const cats = [...local];
+    cats[ci] = { ...cats[ci], items: [...cats[ci].items, { name: 'Nouvelle compétence', level: 50 }] };
+    setLocal(cats);
+  };
+
+  const removeItem = (ci, ii) => {
+    const cats = [...local];
+    cats[ci] = { ...cats[ci], items: cats[ci].items.filter((_, j) => j !== ii) };
+    setLocal(cats);
+  };
+
+  const addCategory = () => {
+    const name = prompt('Nom de la catégorie:');
+    if (name) setLocal([...local, { category: name, icon: 'Code', items: [] }]);
+  };
+
+  const save = () => { updateSection('skills', local); onSave(); };
+
+  return (
+    <>
+      {local.map((cat, ci) => (
+        <Card key={ci}>
+          <button onClick={() => setOpenCat(openCat === ci ? -1 : ci)}
+            className="w-full flex items-center justify-between mb-2 cursor-pointer">
+            <h3 className="text-sm font-bold">{cat.category}</h3>
+            {openCat === ci ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          </button>
+          {openCat === ci && (
+            <>
+              <Field label="Nom de la catégorie" value={cat.category}
+                onChange={(v) => { const c = [...local]; c[ci] = { ...c[ci], category: v }; setLocal(c); }} />
+              {cat.items.map((item, ii) => (
+                <div key={ii} className="flex gap-3 items-end mb-2">
+                  <div className="flex-1">
+                    <Field label="Compétence" value={item.name} onChange={(v) => updateItem(ci, ii, 'name', v)} />
+                  </div>
+                  <div className="w-20">
+                    <Field label="Niveau" value={item.level} onChange={(v) => updateItem(ci, ii, 'level', v)} type="number" />
+                  </div>
+                  <button onClick={() => removeItem(ci, ii)} className="p-2 text-red-400 hover:text-red-600 cursor-pointer mb-4">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              <button onClick={() => addItem(ci)} className="text-sm font-medium cursor-pointer flex items-center gap-1" style={{ color: accent }}>
+                <Plus size={14} /> Ajouter une compétence
+              </button>
+            </>
+          )}
+        </Card>
+      ))}
+      <div className="flex items-center gap-3">
+        <button onClick={addCategory} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[var(--color-border-dark)] text-sm font-medium cursor-pointer"
+          style={{ color: accent }}>
+          <Plus size={14} /> Nouvelle catégorie
+        </button>
+        <SaveBtn onClick={save} accent={accent} />
+      </div>
+    </>
+  );
+}
+
+/* --- PROJECTS EDITOR --- */
+function ProjectsEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.projects);
+  const [editing, setEditing] = useState(null);
+
+  const update = (i, key, val) => {
+    const p = [...local];
+    p[i] = { ...p[i], [key]: val };
+    setLocal(p);
+  };
+
+  const addProject = () => {
+    setLocal([...local, {
+      id: `project-${Date.now()}`, title: 'Nouveau Projet', client: '', period: '',
+      role: '', description: '', technologies: [], tags: [], featured: false,
+    }]);
+    setEditing(local.length);
+  };
+
+  const remove = (i) => { setLocal(local.filter((_, j) => j !== i)); };
+
+  const save = () => { updateSection('projects', local); onSave(); };
+
+  return (
+    <>
+      {local.map((p, i) => (
+        <Card key={p.id || i}>
+          <div className="flex items-center justify-between mb-2">
+            <button onClick={() => setEditing(editing === i ? null : i)} className="flex items-center gap-2 cursor-pointer">
+              {editing === i ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              <span className="font-bold text-sm">{p.title}</span>
+              {p.featured && <span className="text-xs px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: accent }}>★ Phare</span>}
+            </button>
+            <button onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 cursor-pointer"><Trash2 size={16} /></button>
+          </div>
+          {editing === i && (
+            <>
+              <Field label="Titre" value={p.title} onChange={(v) => update(i, 'title', v)} />
+              <Field label="Client" value={p.client} onChange={(v) => update(i, 'client', v)} />
+              <Field label="Période" value={p.period} onChange={(v) => update(i, 'period', v)} />
+              <Field label="Rôle" value={p.role} onChange={(v) => update(i, 'role', v)} />
+              <Field label="Description" value={p.description} onChange={(v) => update(i, 'description', v)} textarea rows={4} />
+              <Field label="Technologies (séparées par des virgules)" value={p.technologies.join(', ')}
+                onChange={(v) => update(i, 'technologies', v.split(',').map(s => s.trim()).filter(Boolean))} />
+              <Field label="Tags (séparés par des virgules)" value={p.tags.join(', ')}
+                onChange={(v) => update(i, 'tags', v.split(',').map(s => s.trim()).filter(Boolean))} />
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" checked={p.featured} onChange={(e) => update(i, 'featured', e.target.checked)} />
+                Projet phare
+              </label>
+            </>
+          )}
+        </Card>
+      ))}
+      <div className="flex items-center gap-3">
+        <button onClick={addProject} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[var(--color-border-dark)] text-sm font-medium cursor-pointer"
+          style={{ color: accent }}>
+          <Plus size={14} /> Ajouter un projet
+        </button>
+        <SaveBtn onClick={save} accent={accent} />
+      </div>
+    </>
+  );
+}
+
+/* --- CERTIFICATIONS EDITOR --- */
+function CertsEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.certifications);
+  const [editing, setEditing] = useState(null);
+
+  const update = (i, key, val) => {
+    const c = [...local];
+    c[i] = { ...c[i], [key]: val };
+    setLocal(c);
+  };
+
+  const add = () => {
+    setLocal([...local, { name: 'Nouvelle Certification', org: '', date: '', category: 'Réseau', status: 'obtained', link: '' }]);
+    setEditing(local.length);
+  };
+
+  const remove = (i) => { setLocal(local.filter((_, j) => j !== i)); };
+  const save = () => { updateSection('certifications', local); onSave(); };
+
+  return (
+    <>
+      {local.map((c, i) => (
+        <Card key={i}>
+          <div className="flex items-center justify-between mb-2">
+            <button onClick={() => setEditing(editing === i ? null : i)} className="flex items-center gap-2 cursor-pointer">
+              {editing === i ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              <span className="font-bold text-sm">{c.name}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${c.status === 'obtained' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                {c.status === 'obtained' ? 'Obtenue' : 'En cours'}
+              </span>
+            </button>
+            <button onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 cursor-pointer"><Trash2 size={16} /></button>
+          </div>
+          {editing === i && (
+            <>
+              <Field label="Nom" value={c.name} onChange={(v) => update(i, 'name', v)} />
+              <Field label="Organisation" value={c.org} onChange={(v) => update(i, 'org', v)} />
+              <Field label="Date" value={c.date} onChange={(v) => update(i, 'date', v)} />
+              <Field label="Catégorie" value={c.category} onChange={(v) => update(i, 'category', v)} />
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Statut</label>
+                <select value={c.status} onChange={(e) => update(i, 'status', e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm">
+                  <option value="obtained">Obtenue</option>
+                  <option value="in-progress">En cours</option>
+                </select>
+              </div>
+              <Field label="Lien de vérification" value={c.link} onChange={(v) => update(i, 'link', v)} placeholder="https://..." />
+            </>
+          )}
+        </Card>
+      ))}
+      <div className="flex items-center gap-3">
+        <button onClick={add} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[var(--color-border-dark)] text-sm font-medium cursor-pointer"
+          style={{ color: accent }}><Plus size={14} /> Ajouter</button>
+        <SaveBtn onClick={save} accent={accent} />
+      </div>
+    </>
+  );
+}
+
+/* --- EXPERIENCE EDITOR --- */
+function ExperienceEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.experience);
+  const [editing, setEditing] = useState(null);
+
+  const update = (i, key, val) => {
+    const e = [...local];
+    e[i] = { ...e[i], [key]: val };
+    setLocal(e);
+  };
+
+  const add = () => {
+    setLocal([...local, { company: 'Nouvelle Entreprise', role: '', period: '', description: '', missions: [] }]);
+    setEditing(local.length);
+  };
+
+  const remove = (i) => { setLocal(local.filter((_, j) => j !== i)); };
+  const save = () => { updateSection('experience', local); onSave(); };
+
+  return (
+    <>
+      {local.map((exp, i) => (
+        <Card key={i}>
+          <div className="flex items-center justify-between mb-2">
+            <button onClick={() => setEditing(editing === i ? null : i)} className="flex items-center gap-2 cursor-pointer">
+              {editing === i ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              <span className="font-bold text-sm">{exp.company}</span>
+            </button>
+            <button onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 cursor-pointer"><Trash2 size={16} /></button>
+          </div>
+          {editing === i && (
+            <>
+              <Field label="Entreprise" value={exp.company} onChange={(v) => update(i, 'company', v)} />
+              <Field label="Poste" value={exp.role} onChange={(v) => update(i, 'role', v)} />
+              <Field label="Période" value={exp.period} onChange={(v) => update(i, 'period', v)} />
+              <Field label="Description" value={exp.description} onChange={(v) => update(i, 'description', v)} textarea />
+              <Field label="Missions (une par ligne)" value={exp.missions.join('\n')}
+                onChange={(v) => update(i, 'missions', v.split('\n').filter(Boolean))} textarea rows={5} />
+            </>
+          )}
+        </Card>
+      ))}
+      <div className="flex items-center gap-3">
+        <button onClick={add} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[var(--color-border-dark)] text-sm font-medium cursor-pointer"
+          style={{ color: accent }}><Plus size={14} /> Ajouter</button>
+        <SaveBtn onClick={save} accent={accent} />
+      </div>
+    </>
+  );
+}
+
+/* --- EDUCATION EDITOR --- */
+function EducationEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.education);
+  const [editing, setEditing] = useState(null);
+
+  const update = (i, key, val) => {
+    const e = [...local];
+    e[i] = { ...e[i], [key]: val };
+    setLocal(e);
+  };
+
+  const add = () => {
+    setLocal([...local, { degree: 'Nouveau Diplôme', school: '', period: '', location: '' }]);
+    setEditing(local.length);
+  };
+
+  const remove = (i) => { setLocal(local.filter((_, j) => j !== i)); };
+  const save = () => { updateSection('education', local); onSave(); };
+
+  return (
+    <>
+      {local.map((edu, i) => (
+        <Card key={i}>
+          <div className="flex items-center justify-between mb-2">
+            <button onClick={() => setEditing(editing === i ? null : i)} className="flex items-center gap-2 cursor-pointer">
+              {editing === i ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              <span className="font-bold text-sm">{edu.degree}</span>
+            </button>
+            <button onClick={() => remove(i)} className="p-1.5 text-red-400 hover:text-red-600 cursor-pointer"><Trash2 size={16} /></button>
+          </div>
+          {editing === i && (
+            <>
+              <Field label="Diplôme" value={edu.degree} onChange={(v) => update(i, 'degree', v)} />
+              <Field label="École" value={edu.school} onChange={(v) => update(i, 'school', v)} />
+              <Field label="Période" value={edu.period} onChange={(v) => update(i, 'period', v)} />
+              <Field label="Localisation" value={edu.location} onChange={(v) => update(i, 'location', v)} />
+            </>
+          )}
+        </Card>
+      ))}
+      <div className="flex items-center gap-3">
+        <button onClick={add} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-[var(--color-border-dark)] text-sm font-medium cursor-pointer"
+          style={{ color: accent }}><Plus size={14} /> Ajouter</button>
+        <SaveBtn onClick={save} accent={accent} />
+      </div>
+    </>
+  );
+}
+
+/* --- CONTACT EDITOR --- */
+function ContactEditor({ data, updateSection, accent, onSave }) {
+  const [local, setLocal] = useState(data.contact);
+
+  const updateSocial = (i, key, val) => {
+    const soc = [...local.socials];
+    soc[i] = { ...soc[i], [key]: val };
+    setLocal({ ...local, socials: soc });
+  };
+
+  const addSocial = () => {
+    setLocal({ ...local, socials: [...local.socials, { platform: 'Nouveau', url: '', icon: 'ExternalLink' }] });
+  };
+
+  const removeSocial = (i) => {
+    setLocal({ ...local, socials: local.socials.filter((_, j) => j !== i) });
+  };
+
+  const handleCV = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setLocal({ ...local, cvFile: url });
+  };
+
+  const save = () => { updateSection('contact', local); onSave(); };
+
+  return (
+    <>
+      <Card title="Informations de contact">
+        <Field label="Email" value={local.email} onChange={(v) => setLocal({ ...local, email: v })} />
+        <Field label="Téléphone" value={local.phone} onChange={(v) => setLocal({ ...local, phone: v })} />
+      </Card>
+      <Card title="Réseaux sociaux">
+        {local.socials.map((s, i) => (
+          <div key={i} className="flex gap-3 items-end mb-3">
+            <div className="w-32">
+              <Field label="Plateforme" value={s.platform} onChange={(v) => updateSocial(i, 'platform', v)} />
+            </div>
+            <div className="flex-1">
+              <Field label="URL" value={s.url} onChange={(v) => updateSocial(i, 'url', v)} />
+            </div>
+            <div className="w-28">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Icône</label>
+                <select value={s.icon} onChange={(e) => updateSocial(i, 'icon', e.target.value)}
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm">
+                  <option value="Linkedin">LinkedIn</option>
+                  <option value="Github">GitHub</option>
+                  <option value="ExternalLink">Autre</option>
+                </select>
+              </div>
+            </div>
+            <button onClick={() => removeSocial(i)} className="p-2 text-red-400 hover:text-red-600 cursor-pointer mb-4">
+              <Trash2 size={16} />
+            </button>
+          </div>
+        ))}
+        <button onClick={addSocial} className="text-sm font-medium cursor-pointer flex items-center gap-1" style={{ color: accent }}>
+          <Plus size={14} /> Ajouter un réseau
+        </button>
+      </Card>
+      <Card title="CV">
+        <label className="px-4 py-2 rounded-xl bg-[var(--color-bg-secondary)] text-sm font-medium cursor-pointer hover:bg-[var(--color-border)] transition-colors inline-flex items-center gap-2">
+          <Upload size={16} />Changer le CV (PDF)
+          <input type="file" accept=".pdf" onChange={handleCV} className="hidden" />
+        </label>
+      </Card>
+      <SaveBtn onClick={save} accent={accent} />
+    </>
+  );
+}
+
+/* --- SETTINGS EDITOR --- */
+function SettingsEditor({ data, updateSettings, updateSection, accent, onSave, resetData }) {
+  const [color, setColor] = useState(accent);
+  const [pw, setPw] = useState('');
+  const [seoLocal, setSeoLocal] = useState(data.seo);
+  const [animEnabled, setAnimEnabled] = useState(data.settings?.animationsEnabled !== false);
+
+  const saveColor = () => { updateSettings('accentColor', color); onSave(); };
+  const savePassword = () => {
+    if (pw.length >= 4) { updateSettings('adminPassword', pw); setPw(''); onSave(); }
+  };
+  const saveSeo = () => { updateSection('seo', seoLocal); onSave(); };
+  const saveAnim = (val) => { setAnimEnabled(val); updateSettings('animationsEnabled', val); onSave(); };
+
+  return (
+    <>
+      <Card title="Couleur d'accent">
+        <div className="flex items-center gap-4">
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)}
+            className="w-12 h-12 rounded-xl border border-[var(--color-border)] cursor-pointer" />
+          <Field label="Hex" value={color} onChange={setColor} />
+          <button onClick={saveColor} className="px-4 py-2 rounded-xl text-white text-sm font-medium cursor-pointer"
+            style={{ backgroundColor: color }}>Appliquer</button>
+        </div>
+      </Card>
+
+      <Card title="Mot de passe admin">
+        <Field label="Nouveau mot de passe" value={pw} onChange={setPw} type="password" placeholder="Minimum 4 caractères" />
+        <button onClick={savePassword} disabled={pw.length < 4}
+          className="px-4 py-2 rounded-xl text-white text-sm font-medium cursor-pointer disabled:opacity-50"
+          style={{ backgroundColor: accent }}>Changer le mot de passe</button>
+      </Card>
+
+      <Card title="Animations">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <div className={`relative w-11 h-6 rounded-full transition-colors ${animEnabled ? '' : 'bg-gray-300'}`}
+            style={animEnabled ? { backgroundColor: accent } : {}}
+            onClick={() => saveAnim(!animEnabled)}>
+            <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${animEnabled ? 'left-[22px]' : 'left-0.5'}`} />
+          </div>
+          <span className="text-sm font-medium">Activer les animations</span>
+        </label>
+      </Card>
+
+      <Card title="SEO & Métadonnées">
+        <Field label="Titre de la page" value={seoLocal.title} onChange={(v) => setSeoLocal({ ...seoLocal, title: v })} />
+        <Field label="Description" value={seoLocal.description} onChange={(v) => setSeoLocal({ ...seoLocal, description: v })} textarea />
+        <Field label="Mots-clés" value={seoLocal.keywords} onChange={(v) => setSeoLocal({ ...seoLocal, keywords: v })} />
+        <button onClick={saveSeo} className="px-4 py-2 rounded-xl text-white text-sm font-medium cursor-pointer"
+          style={{ backgroundColor: accent }}>Sauvegarder SEO</button>
+      </Card>
+
+      <Card title="Données">
+        <div className="flex items-center gap-3">
+          <button onClick={resetData}
+            className="px-4 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium cursor-pointer hover:bg-red-100 transition-colors flex items-center gap-2">
+            <RefreshCw size={14} /> Réinitialiser toutes les données
+          </button>
+        </div>
+      </Card>
+    </>
+  );
+}
