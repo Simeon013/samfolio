@@ -10,110 +10,72 @@ export default function Skills() {
   const { data } = usePortfolioData();
   const skills = data.skills;
   const accent = data.settings?.accentColor || '#0066FF';
-  const [activeCategory, setActiveCategory] = useState(null);
-
-  const filtered = activeCategory
-    ? skills.filter(s => s.category === activeCategory)
-    : skills;
+  
+  // Show only first 4 categories on homepage for brevity
+  const featuredSkills = skills.slice(0, 4);
 
   return (
-    <section id="skills" className="section-padding bg-[var(--color-bg-tertiary)] text-white relative isolate overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section id="skills" className="section-padding relative overflow-hidden bg-[var(--color-bg-tertiary)] text-white">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-accent)]/20 rounded-full blur-[100px] animate-blob" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
+        <div 
+          className="absolute inset-0 opacity-[0.05]" 
+          style={{ backgroundImage: `linear-gradient(${accent} 1px, transparent 1px), linear-gradient(90deg, ${accent} 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
+        />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10 px-6">
         <FadeInUp>
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6"
-              style={{ backgroundColor: `${accent}20`, color: accent }}>
-              Expertise
+          <div className="flex flex-col items-center mb-12 text-center">
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)] mb-4">
+              &lt;Skills /&gt;
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight">Compétences Techniques</h2>
-            <p className="text-[var(--color-text-muted)] max-w-2xl mx-auto text-lg">
-              Une maîtrise complète des technologies modernes pour des infrastructures robustes et sécurisées.
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Expertise Technique</h2>
+            <p className="text-gray-400 max-w-2xl text-base font-light">
+              Aperçu de mes compétences clés.
             </p>
           </div>
         </FadeInUp>
 
-        <FadeInUp delay={0.1}>
-          <div className="flex flex-wrap justify-center gap-2 mb-16">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                !activeCategory 
-                  ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' 
-                  : 'bg-white/5 border-white/10 text-[var(--color-text-muted)] hover:bg-white/10 hover:text-white'
-              }`}
-              style={!activeCategory ? { backgroundColor: accent } : {}}
-            >
-              Toutes
-            </button>
-            {skills.map(s => (
-              <button
-                key={s.category}
-                onClick={() => setActiveCategory(s.category)}
-                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                  activeCategory === s.category
-                    ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' 
-                    : 'bg-white/5 border-white/10 text-[var(--color-text-muted)] hover:bg-white/10 hover:text-white'
-                }`}
-                style={activeCategory === s.category ? { backgroundColor: accent } : {}}
-              >
-                {s.category}
-              </button>
-            ))}
-          </div>
-        </FadeInUp>
-
-        <div className="space-y-12">
-          {filtered.map((group, gi) => {
+        <div className="grid md:grid-cols-2 gap-6 mb-10">
+          {featuredSkills.map((group, gi) => {
             const Icon = iconMap[group.icon] || Code;
             return (
-              <FadeInUp key={group.category} delay={gi * 0.1}>
-                <div className="p-8 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors duration-500 group/card">
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="p-3 rounded-2xl bg-white/5 border border-white/10 group-hover/card:scale-110 transition-transform duration-300">
-                      <Icon size={24} style={{ color: accent }} />
+              <FadeInUp key={group.category} delay={gi * 0.1} className="h-full">
+                <div className="h-full p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-[var(--color-accent)]/50 transition-all duration-500 group/card relative overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+                      <div className="p-2 rounded-lg bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 text-[var(--color-accent)]">
+                        <Icon size={20} />
+                      </div>
+                      <h3 className="text-xl font-bold font-heading">{group.category}</h3>
                     </div>
-                    <h3 className="text-2xl font-bold font-heading">{group.category}</h3>
+
+                    <div className="space-y-3">
+                      {group.items.slice(0, 3).map((skill) => (
+                        <div key={skill.name} className="flex items-center justify-between text-sm">
+                           <span className="font-medium text-gray-300">{skill.name}</span>
+                           <div className="h-1.5 w-24 rounded-full bg-black/50 border border-white/5 overflow-hidden">
+                             <div className="h-full rounded-full bg-[var(--color-accent)]" style={{ width: `${skill.level}%` }} />
+                           </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.05}>
-                    {group.items.map((skill) => (
-                      <motion.div
-                        key={skill.name}
-                        variants={staggerItem}
-                        className="group flex flex-col gap-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
-                            {skill.name}
-                          </span>
-                          <span className="text-xs font-mono text-gray-500 group-hover:text-[var(--color-accent)] transition-colors">
-                            {skill.level}%
-                          </span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                          <motion.div
-                            className="h-full rounded-full relative overflow-hidden"
-                            style={{ backgroundColor: accent }}
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.level}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                          >
-                             <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite] translate-x-[-100%]" />
-                          </motion.div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </StaggerContainer>
                 </div>
               </FadeInUp>
             );
           })}
         </div>
+
+        <FadeInUp delay={0.2} className="text-center">
+            <button className="px-8 py-3 rounded-full bg-[var(--color-accent)] text-white font-medium hover:bg-[var(--color-accent-dark)] transition-colors shadow-lg shadow-[var(--color-accent)]/25">
+                Voir toutes les compétences
+            </button>
+        </FadeInUp>
       </div>
-      
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-[var(--color-accent)]/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
     </section>
   );
 }
