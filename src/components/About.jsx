@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
-import { User, Terminal } from 'lucide-react';
+import { User, Terminal, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { FadeInUp, ScaleIn, StaggerContainer, staggerItem } from './AnimationWrappers';
 import { motion, useInView } from 'framer-motion';
 import { usePortfolioData } from '../hooks/usePortfolioData';
@@ -109,16 +110,19 @@ export default function About() {
             {/* Soft Skills */}
             <FadeInUp delay={0.2} className="pt-2">
               <h3 className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Stack & Skills_</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-6">
                 {softSkills.map((skill) => (
                   <span
                     key={skill}
-                    className="px-2.5 py-1 rounded text-xs font-medium font-mono border border-white/20 bg-white/5 backdrop-blur-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors cursor-default"
+                    className="px-2.5 py-1 rounded-sm text-xs font-medium font-mono border border-white/20 bg-white/5 backdrop-blur-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors cursor-default"
                   >
                     {skill}
                   </span>
                 ))}
               </div>
+              <Link to="/about" className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-accent)] hover:underline underline-offset-4 group/link">
+                Découvrir mon parcours complet <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
+              </Link>
             </FadeInUp>
           </div>
         </div>

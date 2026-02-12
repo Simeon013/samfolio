@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Network, Shield, Server, Cloud, Code } from 'lucide-react';
 import { FadeInUp, StaggerContainer, staggerItem } from './AnimationWrappers';
@@ -71,9 +72,9 @@ export default function Skills() {
         </div>
 
         <FadeInUp delay={0.2} className="text-center">
-            <button className="px-8 py-3 rounded-full bg-[var(--color-accent)] text-white font-medium hover:bg-[var(--color-accent-dark)] transition-colors shadow-lg shadow-[var(--color-accent)]/25">
+            <Link to="/skills" className="px-8 py-3 rounded-full bg-[var(--color-accent)] text-white font-medium hover:bg-[var(--color-accent-dark)] transition-colors shadow-lg shadow-[var(--color-accent)]/25 inline-block">
                 Voir toutes les compétences
-            </button>
+            </Link>
         </FadeInUp>
       </div>
     </section>

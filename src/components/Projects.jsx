@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, Star, X, ExternalLink, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { FadeInUp, StaggerContainer, staggerItem } from './AnimationWrappers';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
@@ -9,48 +10,29 @@ export default function Projects() {
   const projects = data.projects;
   const accent = data.settings?.accentColor || '#0066FF';
   const [selected, setSelected] = useState(null);
-  const [filter, setFilter] = useState('all');
 
-  const allTags = [...new Set(projects.flatMap(p => p.tags))];
-  const filtered = filter === 'all' ? projects : projects.filter(p => p.tags.includes(filter));
+  // Show only featured projects, max 3
+  const featuredProjects = projects.filter(p => p.featured).slice(0, 3);
+  const displayProjects = featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 3);
 
   return (
     <section id="projects" className="section-padding bg-[var(--color-bg-primary)] overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <FadeInUp>
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6"
               style={{ backgroundColor: `${accent}15`, color: accent }}>
               Réalisations
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight text-[var(--color-text-primary)]">Projets Majeurs</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight text-[var(--color-text-primary)]">Projets Phares</h2>
             <p className="text-[var(--color-text-secondary)] max-w-2xl mx-auto text-lg">
-              Une sélection de projets complexes menés à bien, de la conception au déploiement.
+              Une sélection de mes travaux les plus significatifs.
             </p>
           </div>
         </FadeInUp>
 
-        <FadeInUp delay={0.1}>
-          <div className="flex flex-wrap justify-center gap-2 mb-16">
-            <button onClick={() => setFilter('all')}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                filter === 'all' ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' : 'bg-white border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-              }`} style={filter === 'all' ? { backgroundColor: accent } : {}}>
-              Tous
-            </button>
-            {allTags.map(tag => (
-              <button key={tag} onClick={() => setFilter(tag)}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                  filter === tag ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' : 'bg-white border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-                }`} style={filter === tag ? { backgroundColor: accent } : {}}>
-                {tag}
-              </button>
-            ))}
-          </div>
-        </FadeInUp>
-
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.08}>
-          {filtered.map((project) => (
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" stagger={0.08}>
+          {displayProjects.map((project) => (
             <motion.div
               key={project.id}
               variants={staggerItem}
@@ -98,6 +80,12 @@ export default function Projects() {
             </motion.div>
           ))}
         </StaggerContainer>
+
+        <FadeInUp delay={0.2} className="text-center">
+            <Link to="/projects" className="px-8 py-3 rounded-full border border-[var(--color-accent)] text-[var(--color-accent)] font-medium hover:bg-[var(--color-accent)] hover:text-white transition-all shadow-lg hover:shadow-[var(--color-accent)]/25 inline-block">
+                Découvrir tous les projets
+            </Link>
+        </FadeInUp>
 
         <AnimatePresence>
           {selected && (
