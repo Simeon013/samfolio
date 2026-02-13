@@ -35,7 +35,7 @@ export default function Skills() {
         <ScaleIn className="w-full">
             <div className="rounded-3xl border border-white/40 bg-white/20 backdrop-blur-xl shadow-2xl relative overflow-hidden ring-1 ring-white/10 group/dashboard">
                 {/* Dashboard Header / Status Bar */}
-                <div className="absolute top-0 left-0 right-0 h-10 bg-white/10 border-b border-white/20 flex items-center px-4 justify-between backdrop-blur-sm z-20">
+                <div className="absolute top-0 left-0 right-0 h-10 bg-white/10 border-b border-white/20 flex items-center px-4 justify-between z-20">
                     <div className="flex gap-1.5">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />

@@ -32,7 +32,7 @@ export default function Navbar() {
         className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[90%]"
       >
         {/* Desktop Pill */}
-        <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full nav-pill shadow-lg shadow-black/5 bg-white/80 backdrop-blur-md border border-white/20">
+        <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full nav-pill shadow-lg shadow-black/5 bg-white/90 backdrop-blur-md border border-white/20">
           {navLinks.map(({ path, label, icon: Icon }) => {
             const isActive = isActiveLink(path);
             return (
@@ -52,7 +52,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Pill */}
-        <div className="md:hidden flex items-center justify-between p-2 rounded-full nav-pill shadow-lg shadow-black/5 min-w-[280px] bg-white/80 backdrop-blur-md border border-white/20">
+        <div className="md:hidden flex items-center justify-between p-2 rounded-full nav-pill shadow-lg shadow-black/5 min-w-[280px] bg-white/90 backdrop-blur-md border border-white/20">
            <Link to="/" className="pl-4 font-bold text-lg tracking-tight flex items-center gap-1" style={{fontFamily: 'var(--font-heading)'}}>
              S.G<span style={{color: accent}}>.</span>
            </Link>
