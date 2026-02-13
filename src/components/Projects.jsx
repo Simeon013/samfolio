@@ -23,7 +23,7 @@ export default function Projects() {
         <FadeInUp>
           <div className="text-center mb-16">
             <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-4 shadow-sm">
-               &lt;Réalisations /&gt;
+               // Réalisations
             </span>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight text-[var(--color-text-primary)]">Réalisations Phares</h2>
             <p className="text-[var(--color-text-secondary)] max-w-2xl mx-auto text-lg leading-relaxed font-medium">

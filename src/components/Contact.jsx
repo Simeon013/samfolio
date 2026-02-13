@@ -18,9 +18,10 @@ export default function Contact() {
             <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-accent)]/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             <div className="relative z-10">
-                <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase mb-6 bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/20 shadow-sm">
-                  Démarrons un Projet
-                </span>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-6 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
+              // Contact
+            </span>
                 <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight text-[var(--color-text-primary)]">
                     Prêt à donner vie à vos idées ?
                 </h2>
