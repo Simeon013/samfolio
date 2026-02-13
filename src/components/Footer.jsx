@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react';
+import { Heart, Activity, ShieldCheck, GitBranch } from 'lucide-react';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
 export default function Footer() {
@@ -7,14 +7,33 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="py-8 border-t border-[var(--color-border)]">
-      <div className="max-w-6xl mx-auto px-4 text-center">
-        <p className="text-sm text-[var(--color-text-muted)]">
-          © {year} {data.hero.name}. Tous droits réservés.
+    <footer className="py-6 border-t border-white/10 bg-black/5 backdrop-blur-sm relative z-50">
+      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        {/* Left: System Status */}
+        <div className="flex items-center gap-3">
+             <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-[9px] font-mono text-green-600 font-bold uppercase tracking-wider">
+                 <Activity size={10} /> System Online
+             </div>
+             <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-[9px] font-mono text-blue-600 font-bold uppercase tracking-wider">
+                 <ShieldCheck size={10} /> Secure
+             </div>
+        </div>
+
+        {/* Center: Copyright */}
+        <p className="text-[10px] text-[var(--color-text-muted)] font-mono tracking-wide text-center">
+          © {year} {data.hero.name}. Designed as <span className="font-bold">Portfolio_OS v2.1</span>
         </p>
-        <p className="text-xs text-[var(--color-text-muted)] mt-1 flex items-center justify-center gap-1">
-          Conçu avec <Heart size={12} style={{ color: accent }} fill={accent} /> en France
-        </p>
+
+        {/* Right: Credits */}
+        <div className="flex items-center gap-4 text-[10px] font-medium text-[var(--color-text-secondary)]">
+          <span className="flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity cursor-help">
+            <GitBranch size={10} /> main_branch
+          </span>
+          <span className="flex items-center gap-1 opacity-70">
+             Build with <Heart size={10} style={{ color: accent }} fill={accent} /> in France
+          </span>
+        </div>
       </div>
     </footer>
   );
