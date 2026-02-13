@@ -17,13 +17,16 @@ export default function Skills() {
 
   return (
     <section id="skills" className="section-padding relative overflow-hidden bg-transparent text-[var(--color-text-primary)]">
+      {/* Connector Line Top */}
+       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-t from-transparent via-[var(--color-accent)]/20 to-[var(--color-accent)]/50 z-20" />
+      
       {/* Background Decor - Removed internal blobs to use global background */}
       
       <div className="max-w-6xl mx-auto relative z-10 px-6">
         <FadeInUp>
           <div className="flex flex-col items-center mb-16 text-center">
             <span className="px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-4 shadow-sm">
-              &lt;Skills /&gt;
+              &lt;Compétences /&gt;
             </span>
             <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-[var(--color-text-primary)]">Expertise Technique</h2>
             <p className="text-[var(--color-text-secondary)] max-w-2xl text-base font-medium">

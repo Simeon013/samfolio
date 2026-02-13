@@ -37,93 +37,109 @@ export default function About() {
   const accent = data.settings?.accentColor || '#0066FF';
 
   return (
-    <section id="about" className="section-padding relative overflow-hidden">
-      {/* Background Decor: Animated Blobs for Glassmorphism */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-[var(--color-accent)]/10 rounded-full blur-3xl animate-blob"></div>
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+    <section id="about" className="section-padding py-8 md:py-10 relative overflow-hidden">
+      {/* Connector Line */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-b from-transparent via-[var(--color-accent)]/20 to-[var(--color-accent)]/50 z-20" />
       
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-           style={{ backgroundImage: `radial-gradient(${accent} 1px, transparent 1px)`, backgroundSize: '24px 24px' }} 
+      {/* Background Decor - Preserved but scaled down */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-[var(--color-accent)]/10 rounded-full blur-3xl animate-blob"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+      
+      {/* Tech Grid Overlay */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+           style={{ backgroundImage: `linear-gradient(to right, ${accent} 1px, transparent 1px), linear-gradient(to bottom, ${accent} 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
       />
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-5xl mx-auto relative z-10 px-4">
         <FadeInUp>
-          <div className="flex flex-col items-start md:items-center mb-12 text-left md:text-center w-full">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)] mb-4">
-              &lt;About /&gt;
+          <div className="flex flex-col items-center mb-10 text-center">
+            <span className="px-3 py-1 rounded-full text-[10px] font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-3 shadow-sm flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
+              // Profil
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Introduction</h2>
-            <div className="h-1 w-20 bg-[var(--color-accent)] rounded-full hidden md:block"></div>
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 tracking-tight text-[var(--color-text-primary)]">
+              Qui suis-je ?
+            </h2>
           </div>
         </FadeInUp>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
-          {/* Left Column: Photo & Quick Info (Glass Card) */}
-          <ScaleIn className="relative group">
-            <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-xl shadow-xl p-3">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[var(--color-bg-tertiary)]">
-                 {photo ? (
-                  <img src={photo} alt="Samuel GODONOU" className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <User size={64} className="text-[var(--color-text-muted)] opacity-30" />
-                  </div>
-                )}
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
+        <div className="grid lg:grid-cols-12 gap-6 items-start">
+          {/* Left Column: Digital Identity Card (Glass) */}
+          <div className="lg:col-span-5">
+             <ScaleIn className="relative group h-full">
+              <div className="relative h-full rounded-2xl overflow-hidden border border-white/40 bg-white/30 backdrop-blur-xl shadow-lg p-4 ring-1 ring-white/20">
+                {/* Decorative Tech Corners */}
+                <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[var(--color-accent)]/50 rounded-tl-xl" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[var(--color-accent)]/50 rounded-br-xl" />
                 
-                {/* Floating Name on Image */}
-                <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <div className="font-mono text-xs text-[var(--color-accent)] mb-1">Status: Online</div>
-                  <div className="font-bold text-lg leading-tight">Samuel GODONOU</div>
+                {/* Image Container */}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 border border-white/20 shadow-inner max-h-[350px] mx-auto">
+                   {photo ? (
+                    <img src={photo} alt="Samuel GODONOU" className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                      <User size={48} className="text-[var(--color-text-muted)] opacity-30" />
+                    </div>
+                  )}
+                  
+                  {/* Digital Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
+                  
+                  {/* ID Info */}
+                  <div className="absolute bottom-3 left-3 right-3 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white overflow-hidden">
+                    <div className="flex justify-between items-center text-[9px] font-mono text-[var(--color-accent-light)] mb-0.5 uppercase tracking-wider">
+                      <span>ID: 9482-SEC</span>
+                      <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" /> Verified</span>
+                    </div>
+                    <div className="font-bold text-base leading-tight truncate">Samuel GODONOU</div>
+                    <div className="text-[10px] text-gray-200 font-mono">Admin Sys & Réseaux</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </ScaleIn>
+            </ScaleIn>
+          </div>
 
-          {/* Right Column: Bio, Skills, Stats */}
-          <div className="flex flex-col gap-6">
+          {/* Right Column: Bio & Tech Stack - More Compact */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
             <FadeInUp delay={0.1}>
-              <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-6 shadow-sm">
-                <p className="text-base text-[var(--color-text-secondary)] leading-relaxed text-justify">
+              <div className="rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md p-6 shadow-md ring-1 ring-white/20 relative overflow-hidden group/bio">
+                 <div className="absolute top-0 right-0 p-3 opacity-10 group-hover/bio:opacity-20 transition-opacity">
+                    <Terminal size={80} />
+                 </div>
+                <h3 className="text-base font-bold font-heading mb-3 text-[var(--color-text-primary)] flex items-center gap-2">
+                   <Terminal size={18} className="text-[var(--color-accent)]" />
+                   Initialisation...
+                </h3>
+                <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed text-justify relative z-10 font-medium">
                   {bio}
                 </p>
               </div>
             </FadeInUp>
 
-            {/* Compact Stats (Glass Cards) */}
-            <StaggerContainer className="grid grid-cols-2 gap-3">
-              {stats.map((stat, i) => (
-                <motion.div
-                  key={i}
-                  variants={staggerItem}
-                  className="p-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md shadow-sm hover:border-[var(--color-accent)]/30 transition-all text-center group"
-                >
-                  <div className="text-2xl font-black font-mono text-[var(--color-accent)] group-hover:scale-110 transition-transform">
-                    <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                  </div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--color-text-muted)] font-medium mt-1">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </StaggerContainer>
-
-            {/* Soft Skills */}
-            <FadeInUp delay={0.2} className="pt-2">
-              <h3 className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Stack & Skills_</h3>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {softSkills.map((skill) => (
-                  <span
-                    key={skill}
-                    className="px-2.5 py-1 rounded-sm text-xs font-medium font-mono border border-white/20 bg-white/5 backdrop-blur-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-colors cursor-default"
-                  >
-                    {skill}
-                  </span>
-                ))}
+            {/* Tech Stack Bubbles */}
+            <FadeInUp delay={0.2}>
+              <div className="rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md p-5 shadow-sm ring-1 ring-white/20">
+                 <h3 className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <span className="w-full h-px bg-[var(--color-border)]/50" />
+                    Dominance_Technique
+                    <span className="w-full h-px bg-[var(--color-border)]/50" />
+                 </h3>
+                 <div className="flex flex-wrap justify-center gap-1.5">
+                  {softSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-semibold font-mono border border-white/40 bg-white/20 backdrop-blur-sm text-[var(--color-text-secondary)] hover:text-white hover:bg-[var(--color-accent)] hover:border-[var(--color-accent)] transition-all duration-300 cursor-default shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <Link to="/about" className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-accent)] hover:underline underline-offset-4 group/link">
-                Découvrir mon parcours complet <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
+            </FadeInUp>
+
+            <FadeInUp delay={0.3} className="flex justify-end mt-2">
+              <Link to="/about" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-accent)] text-white text-xs font-bold shadow-lg shadow-[var(--color-accent)]/30 hover:shadow-[var(--color-accent)]/50 hover:-translate-y-1 transition-all duration-300 group">
+                Dossier complet <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </FadeInUp>
           </div>
