@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, User, Star, X, ExternalLink, ArrowRight, Folder, Database, Eye } from 'lucide-react';
+import { Calendar, User, Star, X, ExternalLink, ArrowRight, Folder, Database, Eye, Terminal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FadeInUp, StaggerContainer, staggerItem } from './AnimationWrappers';
 import { usePortfolioData } from '../hooks/usePortfolioData';
@@ -20,7 +20,7 @@ export default function Projects() {
       {/* Connector Line from Skills */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-t from-transparent via-[var(--color-accent)]/20 to-[var(--color-accent)]/50 z-20" />
 
-      <div className="max-w-6xl mx-auto px-4 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 relative z-40">
         <FadeInUp>
           <div className="text-center mb-16">
             <span className="px-3 py-1 rounded-full text-[10px] font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-3 shadow-sm inline-flex items-center gap-2">
@@ -121,73 +121,97 @@ export default function Projects() {
              </div>
         </FadeInUp>
 
-        <AnimatePresence>
+        {/* Modal - Rendered locally with high z-index and safety checks */}
+        <AnimatePresence mode="wait">
           {selected && (
             <motion.div
+              key="modal-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelected(null)}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
             >
               <motion.div
-                initial={{ scale: 0.95, opacity: 0, y: 10 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                key="modal-content"
+                initial={{ scale: 0.95, opacity: 0, y: 20, filter: 'blur(10px)' }}
+                animate={{ scale: 1, opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ scale: 0.95, opacity: 0, y: 20, filter: 'blur(10px)' }}
+                transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-[var(--color-bg-primary)]/95 backdrop-blur-xl border border-[var(--color-border)] rounded-xl overflow-hidden w-full max-w-2xl shadow-2xl relative"
+                className="bg-gradient-to-br from-white/70 to-white/30 backdrop-blur-2xl border border-white/40 rounded-2xl w-full max-w-xl shadow-2xl relative overflow-hidden group/modal ring-1 ring-white/20 mx-4 md:mx-0"
               >
-                 {/* Modal Header */}
-                 <div className="h-12 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]/50 flex items-center justify-between px-4">
-                     <div className="flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)]">
-                        <Folder size={14} />
-                        PROJECT_FILE // {selected.title.toUpperCase().replace(/\s/g, '_')}
-                     </div>
-                     <button onClick={() => setSelected(null)} className="p-1 hover:bg-red-500/10 hover:text-red-500 rounded transition-colors">
-                        <X size={18} />
-                     </button>
-                 </div>
+                {/* Glass Reflection Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                
+                {/* Background Decor */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-accent)]/20 rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--color-accent)]/20 rounded-full blur-[80px] pointer-events-none" />
 
-                <div className="p-8 relative">
-                   <div className="flex flex-wrap gap-2 mb-6">
-                      {selected.featured && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-400/10 text-yellow-600 text-[10px] font-bold uppercase tracking-wider border border-yellow-400/20">
-                          <Star size={10} fill="currentColor" /> Priorité Haute
-                        </span>
-                      )}
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-400/10 text-green-600 text-[10px] font-bold uppercase tracking-wider border border-green-400/20">
-                          Status: Terminé
-                      </span>
-                   </div>
+                  {/* Clean Header */}
+                  <div className="h-10 border-b border-white/10 flex items-center justify-end px-4 relative z-10">
+                      <button 
+                        onClick={() => setSelected(null)} 
+                        className="w-7 h-7 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-[var(--color-text-primary)] transition-all"
+                      >
+                        <X size={14} />
+                      </button>
+                  </div>
 
-                   <h3 className="text-3xl font-bold font-heading mb-2 text-[var(--color-text-primary)]">{selected.title}</h3>
-                   <p className="text-sm font-mono text-[var(--color-accent)] mb-8">{selected.client || 'Projet Personnel'}</p>
+                <div className="p-5 md:p-8 relative z-10 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                    
+                    {/* Compact Header */}
+                    <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-1">
+                           {selected?.featured && (
+                             <span className="p-1 rounded bg-yellow-400/20 text-yellow-600">
+                               <Star size={10} fill="currentColor" />
+                             </span>
+                           )}
+                           <h3 className="text-xl md:text-2xl font-bold font-heading text-[var(--color-text-primary)]">
+                             {selected?.title}
+                           </h3>
+                        </div>
+                        <p className="text-xs font-mono text-[var(--color-accent)] opacity-80">
+                           {selected?.client || 'Projet Personnel'}
+                        </p>
+                    </div>
 
-                   <div className="grid sm:grid-cols-2 gap-4 mb-8 text-sm">
-                      <div className="p-3 rounded bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50">
-                         <span className="block text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Rôle</span>
-                         <div className="font-medium text-[var(--color-text-primary)]">{selected.role}</div>
-                      </div>
-                      <div className="p-3 rounded bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50">
-                         <span className="block text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Timeline</span>
-                         <div className="font-medium text-[var(--color-text-primary)]">{selected.period}</div>
-                      </div>
-                   </div>
+                    {/* Compact Stats */}
+                    <div className="flex gap-3 mb-4 text-xs">
+                       <div className="px-2.5 py-1.5 rounded-lg bg-white/40 border border-white/20 backdrop-blur-sm">
+                          <span className="text-[9px] uppercase text-[var(--color-text-muted)] block mb-0.5">Rôle</span>
+                          <span className="font-medium text-[var(--color-text-primary)]">{selected?.role}</span>
+                       </div>
+                       <div className="px-2.5 py-1.5 rounded-lg bg-white/40 border border-white/20 backdrop-blur-sm">
+                          <span className="text-[9px] uppercase text-[var(--color-text-muted)] block mb-0.5">Date</span>
+                          <span className="font-medium text-[var(--color-text-primary)]">{selected?.period}</span>
+                       </div>
+                    </div>
 
-                   <div className="prose prose-sm text-[var(--color-text-secondary)] mb-8 leading-relaxed">
-                     <p>{selected.description}</p>
-                   </div>
+                    {/* Description */}
+                    <div className="prose prose-sm max-w-none mb-6 text-[var(--color-text-secondary)] leading-relaxed text-xs md:text-sm">
+                      <p>{selected?.description}</p>
+                    </div>
 
-                   <div className="border-t border-[var(--color-border)] pt-6">
-                     <h4 className="text-xs font-bold text-[var(--color-text-primary)] uppercase tracking-wider mb-3">Stack Technique</h4>
-                     <div className="flex flex-wrap gap-2">
-                       {selected.technologies.map(tech => (
-                         <span key={tech} className="px-2 py-1 rounded text-xs font-medium bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] font-mono">
-                           {tech}
-                         </span>
-                       ))}
-                     </div>
-                   </div>
+                    {/* Tags */}
+                    {selected?.technologies && (
+                        <div className="flex flex-wrap gap-1.5 mb-6">
+                          {selected.technologies.map(tech => (
+                            <span key={tech} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/30 border border-white/20 text-[var(--color-text-primary)] shadow-sm">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                    )}
+                    
+                    {/* Simple Action */}
+                    <div className="pt-4 border-t border-white/10">
+                      <button className="w-full py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-bold text-xs tracking-wide shadow-lg shadow-[var(--color-accent)]/20 transition-all flex items-center justify-center gap-2 group/btn">
+                          <span>Voir le projet</span>
+                          <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
                 </div>
               </motion.div>
             </motion.div>

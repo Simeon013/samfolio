@@ -39,7 +39,7 @@ export default function Hero() {
   ];
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-12 lg:py-0">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-28 pb-12 lg:py-0">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0">
         {/* Particle Network on top of Global Background */}
@@ -134,9 +134,13 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="relative hidden lg:block"
         >
-          <div className="relative z-10 bg-[#1e1e1e] rounded-xl shadow-2xl border border-gray-700 overflow-hidden max-w-md mx-auto transform rotate-1 hover:rotate-0 transition-transform duration-500">
+          <motion.div 
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative z-10 bg-[#1e1e1e] rounded-xl shadow-2xl border border-white/10 overflow-hidden max-w-md mx-auto"
+          >
             {/* Terminal Header */}
-            <div className="bg-[#2d2d2d] px-4 py-2 flex items-center gap-2 border-b border-gray-700">
+            <div className="bg-[#2d2d2d] px-4 py-2 flex items-center gap-2 border-b border-white/5">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500" />
@@ -149,19 +153,22 @@ export default function Hero() {
             </div>
             
             {/* Terminal Content */}
-            <div className="p-6 font-mono text-sm h-[320px] overflow-hidden text-gray-300 flex flex-col">
+            <div className="p-6 font-mono text-sm h-[320px] overflow-hidden text-gray-300 flex flex-col relative">
+               {/* Scan Line Animation */}
+               <div className="absolute top-0 left-0 w-full h-1 bg-green-500/20 blur-sm animate-scan-line pointer-events-none" />
+
               {terminalLines.map((line, i) => (
                 <div key={i} className={`mb-2 ${line.color} opacity-0 animate-fade-in-up`} style={{ animationDelay: `${i * 0.5}s`, animationFillMode: 'forwards' }}>
                   {line.text}
                 </div>
               ))}
               
-              <div className="mt-4 pt-4 border-t border-gray-700">
+              <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="flex justify-between items-center mb-2">
                   <span>CPU Usage</span>
                   <span className="text-green-400">12%</span>
                 </div>
-                <div className="w-full bg-gray-700 h-1.5 rounded-full mb-4">
+                <div className="w-full bg-white/10 h-1.5 rounded-full mb-4">
                   <div className="bg-green-500 h-1.5 rounded-full w-[12%]" />
                 </div>
                 
@@ -169,7 +176,7 @@ export default function Hero() {
                   <span>Memory</span>
                   <span className="text-blue-400">4.2GB / 16GB</span>
                 </div>
-                <div className="w-full bg-gray-700 h-1.5 rounded-full mb-4">
+                <div className="w-full bg-white/10 h-1.5 rounded-full mb-4">
                   <div className="bg-blue-500 h-1.5 rounded-full w-[26%]" />
                 </div>
 
@@ -177,7 +184,7 @@ export default function Hero() {
                   <span>Network</span>
                   <span className="text-yellow-400">1.2 Gbps</span>
                 </div>
-                <div className="w-full bg-gray-700 h-1.5 rounded-full">
+                <div className="w-full bg-white/10 h-1.5 rounded-full">
                    <div className="bg-yellow-500 h-1.5 rounded-full w-[80%] animate-pulse" />
                 </div>
               </div>
@@ -187,11 +194,11 @@ export default function Hero() {
                 <span className="ml-2 w-2 h-4 bg-gray-500 animate-blink" />
               </div>
             </div>
-          </div>
+          </motion.div>
           
           {/* Abstract blobs behind terminal */}
-          <div className="absolute -top-12 -right-12 w-32 h-32 bg-[var(--color-accent)] rounded-full blur-[80px] opacity-40 animate-blob" />
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-purple-500 rounded-full blur-[80px] opacity-30 animate-blob animation-delay-2000" />
+          <div className="absolute -top-12 -right-12 w-32 h-32 bg-[var(--color-accent)] rounded-full blur-[80px] opacity-20 animate-blob" />
+          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-purple-500 rounded-full blur-[80px] opacity-20 animate-blob animation-delay-2000" />
         </motion.div>
       </div>
 
@@ -204,7 +211,7 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="p-3 rounded-full border border-[var(--color-border)] bg-white/30 backdrop-blur-md cursor-pointer"
+          className="p-3 rounded-full border border-[var(--color-border)] bg-white/30 backdrop-blur-md cursor-pointer hover:bg-white/50 transition-colors"
           onClick={() => scrollTo('about')}
         >
           <ArrowDown size={20} className="text-[var(--color-text-muted)]" />

@@ -91,12 +91,15 @@ export default function Skills() {
                                             </div>
                                             {/* Slim Tech Progress Bar */}
                                             <div className="h-1 w-full bg-[var(--color-bg-tertiary)]/30 rounded-full overflow-hidden">
-                                                <div 
+                                                <motion.div 
+                                                    initial={{ width: 0 }}
+                                                    whileInView={{ width: `${skill.level}%` }}
+                                                    transition={{ duration: 1, delay: 0.2 + (si * 0.1), ease: "easeOut" }}
+                                                    viewport={{ once: true }}
                                                     className="h-full bg-[var(--color-accent)] relative group-hover/module:animate-pulse" 
-                                                    style={{ width: `${skill.level}%` }}
                                                 >
                                                      <div className="absolute right-0 top-0 bottom-0 w-2 bg-white/50 blur-[2px]" />
-                                                </div>
+                                                </motion.div>
                                             </div>
                                         </div>
                                     ))}

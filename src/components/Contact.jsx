@@ -34,7 +34,7 @@ export default function Contact() {
                 </div>
 
                 {/* Terminal Body */}
-                <div className="p-8 md:p-12 relative flex flex-col items-center text-[var(--color-text-primary)]">
+                <div className="p-6 md:p-12 relative flex flex-col items-center text-[var(--color-text-primary)]">
                     {/* Animated Grid Background inside Terminal */}
                     <div className="absolute inset-0 opacity-[0.03]" 
                         style={{ backgroundImage: `linear-gradient(${accent} 1px, transparent 1px), linear-gradient(to right, ${accent} 1px, transparent 1px)`, backgroundSize: '20px 20px' }} 

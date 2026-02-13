@@ -67,15 +67,18 @@ export default function About() {
           {/* Left Column: Digital Identity Card (Glass) */}
           <div className="lg:col-span-5">
              <ScaleIn className="relative group h-full">
-              <div className="relative h-full rounded-2xl overflow-hidden border border-white/40 bg-white/30 backdrop-blur-xl shadow-lg p-4 ring-1 ring-white/20">
+              <div className="relative h-full rounded-2xl overflow-hidden border border-white/40 bg-white/30 backdrop-blur-xl shadow-lg p-4 ring-1 ring-white/20 group/card">
                 {/* Decorative Tech Corners */}
                 <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[var(--color-accent)]/50 rounded-tl-xl" />
                 <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[var(--color-accent)]/50 rounded-br-xl" />
                 
+                {/* Scan Line Animation - One-time on enter */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-accent)]/50 blur-[2px] shadow-[0_0_10px_var(--color-accent)] z-20 animate-scan-fast pointer-events-none opacity-0 group-hover/card:opacity-100" />
+
                 {/* Image Container */}
                 <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 border border-white/20 shadow-inner max-h-[350px] mx-auto">
                    {photo ? (
-                    <img src={photo} alt="Samuel GODONOU" className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0" />
+                    <img src={photo} alt="Samuel GODONOU" className="w-full h-full object-cover transition-all duration-700 group-hover/card:scale-105 filter grayscale group-hover/card:grayscale-0" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
                       <User size={48} className="text-[var(--color-text-muted)] opacity-30" />
@@ -83,10 +86,10 @@ export default function About() {
                   )}
                   
                   {/* Digital Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-accent)]/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
                   
                   {/* ID Info */}
-                  <div className="absolute bottom-3 left-3 right-3 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white overflow-hidden">
+                  <div className="absolute bottom-3 left-3 right-3 p-2 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white overflow-hidden shadow-lg">
                     <div className="flex justify-between items-center text-[9px] font-mono text-[var(--color-accent-light)] mb-0.5 uppercase tracking-wider">
                       <span>ID: 9482-SEC</span>
                       <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" /> Verified</span>
