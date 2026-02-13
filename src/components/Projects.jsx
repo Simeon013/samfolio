@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, User, Star, X, ExternalLink, ArrowRight } from 'lucide-react';
+import { Calendar, User, Star, X, ExternalLink, ArrowRight, Folder, Database, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { FadeInUp, StaggerContainer, staggerItem } from './AnimationWrappers';
 import { usePortfolioData } from '../hooks/usePortfolioData';
@@ -17,65 +17,92 @@ export default function Projects() {
 
   return (
     <section id="projects" className="section-padding bg-transparent relative overflow-hidden text-[var(--color-text-primary)]">
-       {/* Background Decor - Removed internal blobs to use global background */}
+      {/* Connector Line from Skills */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 bg-gradient-to-t from-transparent via-[var(--color-accent)]/20 to-[var(--color-accent)]/50 z-20" />
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <FadeInUp>
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-4 shadow-sm">
+            <span className="px-3 py-1 rounded-full text-[10px] font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-3 shadow-sm inline-flex items-center gap-2">
+               <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse" />
                // Réalisations
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-heading tracking-tight text-[var(--color-text-primary)]">Réalisations Phares</h2>
-            <p className="text-[var(--color-text-secondary)] max-w-2xl mx-auto text-lg leading-relaxed font-medium">
-              Une sélection de mes travaux les plus significatifs.
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-[var(--color-text-primary)]">Projets & Déploiements</h2>
+            <p className="text-sm text-[var(--color-text-secondary)] font-medium leading-relaxed max-w-2xl mx-auto">
+              Base de données des missions accomplies et solutions déployées.
             </p>
           </div>
         </FadeInUp>
 
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" stagger={0.08}>
-          {displayProjects.map((project) => (
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16" stagger={0.08}>
+          {displayProjects.map((project, index) => (
             <motion.div
               key={project.id}
               variants={staggerItem}
               layout
               onClick={() => setSelected(project)}
-              className="group relative rounded-3xl overflow-hidden border border-white/40 bg-white/30 backdrop-blur-md hover:bg-white/50 hover:shadow-xl hover:shadow-[var(--color-accent)]/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer h-full flex flex-col shadow-lg ring-1 ring-white/20"
+              className="group relative rounded-xl overflow-hidden border border-white/40 bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all duration-300 cursor-pointer h-full flex flex-col shadow-lg ring-1 ring-white/10 hover:ring-[var(--color-accent)]/30"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none" />
-              
-              <div className="p-8 flex flex-col h-full relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.slice(0, 3).map(tech => (
-                      <span key={tech} className="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-white/50 text-[var(--color-text-secondary)] border border-[var(--color-border)]/50">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  {project.featured && (
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100/50 text-yellow-600 border border-yellow-200 shadow-sm">
-                      <Star size={16} fill="currentColor" />
+              {/* Folder/File Header */}
+              <div className="h-8 bg-white/10 border-b border-white/10 flex items-center justify-between px-3">
+                 <div className="flex items-center gap-2">
+                    <Folder size={12} className="text-[var(--color-accent)] opacity-70" />
+                    <span className="font-mono text-[9px] text-[var(--color-text-muted)] tracking-wider">
+                        FILE_ID: {8000 + index}
                     </span>
-                  )}
+                 </div>
+                 <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                 </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="p-5 flex flex-col h-full relative">
+                 {/* Hover Scan Effect */}
+                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-accent)]/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-700 ease-in-out pointer-events-none z-0" />
+                 
+                <div className="relative z-10">
+                    <div className="flex justify-between items-start mb-3">
+                        <div className="flex flex-wrap gap-1.5">
+                            {project.technologies.slice(0, 2).map(tech => (
+                            <span key={tech} className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/20">
+                                {tech}
+                            </span>
+                            ))}
+                            {project.technologies.length > 2 && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium text-[var(--color-text-muted)] bg-white/10 border border-white/20">
+                                    +{project.technologies.length - 2}
+                                </span>
+                            )}
+                        </div>
+                         {project.featured && (
+                            <span className="text-[var(--color-accent)] animate-pulse">
+                                <Star size={14} fill="currentColor" />
+                            </span>
+                        )}
+                    </div>
+
+                    <h3 className="text-lg font-bold font-heading mb-2 text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors line-clamp-1">
+                        {project.title}
+                    </h3>
+                    
+                    <p className="text-xs text-[var(--color-text-secondary)] mb-4 line-clamp-3 leading-relaxed opacity-90">
+                        {project.description}
+                    </p>
                 </div>
 
-                <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-[var(--color-accent)] transition-colors text-[var(--color-text-primary)]"
-                  style={{ '--color-accent': accent }}>
-                  {project.title}
-                </h3>
-                
-                <p className="text-[var(--color-text-secondary)] mb-6 line-clamp-3 flex-grow leading-relaxed">
-                  {project.description}
-                </p>
-
-                <div className="pt-6 border-t border-[var(--color-border)]/30 flex items-center justify-between mt-auto">
-                   <div className="flex flex-col gap-1">
-                      <span className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">Client</span>
-                      <span className="text-sm font-semibold text-[var(--color-text-primary)]">{project.client || 'Confidentiel'}</span>
+                <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between relative z-10">
+                   <div className="flex flex-col">
+                       <span className="text-[9px] font-mono text-[var(--color-text-muted)] uppercase">Status</span>
+                       <span className="text-xs font-bold text-green-600 flex items-center gap-1">
+                           <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                           Déployé
+                       </span>
                    </div>
-                   <div className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300 transform group-hover:-rotate-45 shadow-sm border border-white/50">
-                     <ArrowRight size={18} />
-                   </div>
+                   <button className="p-2 rounded-lg bg-white/40 text-[var(--color-text-primary)] hover:bg-[var(--color-accent)] hover:text-white transition-colors shadow-sm">
+                       <Eye size={16} />
+                   </button>
                 </div>
               </div>
             </motion.div>
@@ -83,9 +110,15 @@ export default function Projects() {
         </StaggerContainer>
 
         <FadeInUp delay={0.2} className="text-center">
-            <Link to="/projects" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-white text-[var(--color-text-primary)] font-bold border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:shadow-lg transition-all shadow-sm group">
-                Découvrir tous les projets <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
+             <div className="relative inline-block">
+                <Link to="/projects" className="inline-flex items-center gap-3 px-6 py-3 rounded-md bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] font-mono text-xs hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all group shadow-sm">
+                    <Database size={14} /> ACCOUNT_ARCHIVES // ACCESS_ALL
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+                {/* Decoration Lines */}
+                <div className="absolute top-1/2 -left-12 w-8 h-px bg-[var(--color-border)]" />
+                <div className="absolute top-1/2 -right-12 w-8 h-px bg-[var(--color-border)]" />
+             </div>
         </FadeInUp>
 
         <AnimatePresence>
@@ -95,62 +128,66 @@ export default function Projects() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelected(null)}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             >
               <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                initial={{ scale: 0.95, opacity: 0, y: 10 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                exit={{ scale: 0.95, opacity: 0, y: 10 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-[2rem] p-0 max-w-2xl w-full shadow-2xl relative overflow-hidden"
+                className="bg-[var(--color-bg-primary)]/95 backdrop-blur-xl border border-[var(--color-border)] rounded-xl overflow-hidden w-full max-w-2xl shadow-2xl relative"
               >
-                <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-[var(--color-accent)]/10 to-[var(--color-accent)]/5" />
-                
-                <button onClick={() => setSelected(null)}
-                  className="absolute top-6 right-6 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors cursor-pointer shadow-sm z-50 border border-[var(--color-border)]">
-                  <X size={20} className="text-[var(--color-text-muted)]" />
-                </button>
-
-                <div className="p-8 sm:p-10 relative z-0">
-                  <div className="mb-8 mt-4">
-                    {selected.featured && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-50 text-yellow-700 text-xs font-bold uppercase tracking-wider mb-4 border border-yellow-100">
-                        <Star size={12} fill="currentColor" /> Projet Phare
-                      </span>
-                    )}
-                    <h3 className="text-3xl sm:text-4xl font-bold font-heading mb-2 text-[var(--color-text-primary)]">{selected.title}</h3>
-                    <p className="text-lg text-[var(--color-text-muted)]">{selected.client}</p>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                     <div className="p-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]/50">
-                        <span className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Rôle</span>
-                        <div className="flex items-center gap-2 font-medium text-[var(--color-text-primary)]">
-                           <User size={16} className="text-[var(--color-accent)]" /> {selected.role}
-                        </div>
+                 {/* Modal Header */}
+                 <div className="h-12 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]/50 flex items-center justify-between px-4">
+                     <div className="flex items-center gap-2 font-mono text-xs text-[var(--color-text-muted)]">
+                        <Folder size={14} />
+                        PROJECT_FILE // {selected.title.toUpperCase().replace(/\s/g, '_')}
                      </div>
-                     <div className="p-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]/50">
-                        <span className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Période</span>
-                        <div className="flex items-center gap-2 font-medium text-[var(--color-text-primary)]">
-                           <Calendar size={16} className="text-[var(--color-accent)]" /> {selected.period}
-                        </div>
-                     </div>
-                  </div>
+                     <button onClick={() => setSelected(null)} className="p-1 hover:bg-red-500/10 hover:text-red-500 rounded transition-colors">
+                        <X size={18} />
+                     </button>
+                 </div>
 
-                  <div className="prose prose-lg text-[var(--color-text-secondary)] mb-8 leading-relaxed">
-                    <p>{selected.description}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wider mb-4 border-b border-[var(--color-border)] pb-2">Technologies</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selected.technologies.map(tech => (
-                        <span key={tech} className="px-4 py-2 rounded-xl text-sm font-medium bg-white border border-[var(--color-border)] text-[var(--color-text-secondary)] shadow-sm">
-                          {tech}
+                <div className="p-8 relative">
+                   <div className="flex flex-wrap gap-2 mb-6">
+                      {selected.featured && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-400/10 text-yellow-600 text-[10px] font-bold uppercase tracking-wider border border-yellow-400/20">
+                          <Star size={10} fill="currentColor" /> Priorité Haute
                         </span>
-                      ))}
-                    </div>
-                  </div>
+                      )}
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-400/10 text-green-600 text-[10px] font-bold uppercase tracking-wider border border-green-400/20">
+                          Status: Terminé
+                      </span>
+                   </div>
+
+                   <h3 className="text-3xl font-bold font-heading mb-2 text-[var(--color-text-primary)]">{selected.title}</h3>
+                   <p className="text-sm font-mono text-[var(--color-accent)] mb-8">{selected.client || 'Projet Personnel'}</p>
+
+                   <div className="grid sm:grid-cols-2 gap-4 mb-8 text-sm">
+                      <div className="p-3 rounded bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50">
+                         <span className="block text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Rôle</span>
+                         <div className="font-medium text-[var(--color-text-primary)]">{selected.role}</div>
+                      </div>
+                      <div className="p-3 rounded bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50">
+                         <span className="block text-[10px] font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Timeline</span>
+                         <div className="font-medium text-[var(--color-text-primary)]">{selected.period}</div>
+                      </div>
+                   </div>
+
+                   <div className="prose prose-sm text-[var(--color-text-secondary)] mb-8 leading-relaxed">
+                     <p>{selected.description}</p>
+                   </div>
+
+                   <div className="border-t border-[var(--color-border)] pt-6">
+                     <h4 className="text-xs font-bold text-[var(--color-text-primary)] uppercase tracking-wider mb-3">Stack Technique</h4>
+                     <div className="flex flex-wrap gap-2">
+                       {selected.technologies.map(tech => (
+                         <span key={tech} className="px-2 py-1 rounded text-xs font-medium bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] font-mono">
+                           {tech}
+                         </span>
+                       ))}
+                     </div>
+                   </div>
                 </div>
               </motion.div>
             </motion.div>
