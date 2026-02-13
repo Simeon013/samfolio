@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Network, Shield, Server, Cloud, Code } from 'lucide-react';
+import { Network, Shield, Server, Cloud, Code, ArrowRight } from 'lucide-react';
 import { FadeInUp, StaggerContainer, staggerItem } from './AnimationWrappers';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
@@ -12,54 +12,47 @@ export default function Skills() {
   const skills = data.skills;
   const accent = data.settings?.accentColor || '#0066FF';
   
-  // Show only first 4 categories on homepage for brevity
+  // Show only featured skills, max 4 categories
   const featuredSkills = skills.slice(0, 4);
 
   return (
-    <section id="skills" className="section-padding relative overflow-hidden bg-[var(--color-bg-tertiary)] text-white">
-      {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--color-accent)]/20 rounded-full blur-[100px] animate-blob" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
-        <div 
-          className="absolute inset-0 opacity-[0.05]" 
-          style={{ backgroundImage: `linear-gradient(${accent} 1px, transparent 1px), linear-gradient(90deg, ${accent} 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
-        />
-      </div>
-
+    <section id="skills" className="section-padding relative overflow-hidden bg-transparent text-[var(--color-text-primary)]">
+      {/* Background Decor - Removed internal blobs to use global background */}
+      
       <div className="max-w-6xl mx-auto relative z-10 px-6">
         <FadeInUp>
-          <div className="flex flex-col items-center mb-12 text-center">
-            <span className="px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)] mb-4">
+          <div className="flex flex-col items-center mb-16 text-center">
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-white/50 backdrop-blur-sm text-[var(--color-accent)] mb-4 shadow-sm">
               &lt;Skills /&gt;
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4">Expertise Technique</h2>
-            <p className="text-gray-400 max-w-2xl text-base font-light">
-              Aperçu de mes compétences clés.
+            <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-[var(--color-text-primary)]">Expertise Technique</h2>
+            <p className="text-[var(--color-text-secondary)] max-w-2xl text-base font-medium">
+              Aperçu des technologies maîtrisées.
             </p>
           </div>
         </FadeInUp>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-10">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
           {featuredSkills.map((group, gi) => {
             const Icon = iconMap[group.icon] || Code;
             return (
               <FadeInUp key={group.category} delay={gi * 0.1} className="h-full">
-                <div className="h-full p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-[var(--color-accent)]/50 transition-all duration-500 group/card relative overflow-hidden">
+                <div className="h-full p-6 rounded-2xl border border-white/40 bg-white/30 backdrop-blur-md shadow-lg hover:shadow-xl hover:bg-white/50 transition-all duration-300 group/card relative overflow-hidden ring-1 ring-white/20">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none" />
                   <div className="relative z-10">
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
-                      <div className="p-2 rounded-lg bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 text-[var(--color-accent)]">
-                        <Icon size={20} />
+                    <div className="flex items-center gap-4 mb-6 pb-4 border-b border-black/5">
+                      <div className="p-3 rounded-xl bg-white shadow-md text-[var(--color-accent)] group-hover/card:scale-110 transition-transform duration-300">
+                        <Icon size={24} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-xl font-bold font-heading">{group.category}</h3>
+                      <h3 className="text-xl font-bold font-heading text-[var(--color-text-primary)]">{group.category}</h3>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {group.items.slice(0, 3).map((skill) => (
                         <div key={skill.name} className="flex items-center justify-between text-sm">
-                           <span className="font-medium text-gray-300">{skill.name}</span>
-                           <div className="h-1.5 w-24 rounded-full bg-black/50 border border-white/5 overflow-hidden">
-                             <div className="h-full rounded-full bg-[var(--color-accent)]" style={{ width: `${skill.level}%` }} />
+                           <span className="font-semibold text-[var(--color-text-secondary)]">{skill.name}</span>
+                           <div className="h-2 w-32 rounded-full bg-[var(--color-bg-tertiary)]/5 overflow-hidden shadow-inner">
+                             <div className="h-full rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-light)]" style={{ width: `${skill.level}%` }} />
                            </div>
                         </div>
                       ))}
@@ -72,8 +65,8 @@ export default function Skills() {
         </div>
 
         <FadeInUp delay={0.2} className="text-center">
-            <Link to="/skills" className="px-8 py-3 rounded-full bg-[var(--color-accent)] text-white font-medium hover:bg-[var(--color-accent-dark)] transition-colors shadow-lg shadow-[var(--color-accent)]/25 inline-block">
-                Voir toutes les compétences
+            <Link to="/skills" className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-white text-[var(--color-text-primary)] font-bold border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] hover:shadow-lg transition-all shadow-sm group">
+                Voir toutes les compétences <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
         </FadeInUp>
       </div>

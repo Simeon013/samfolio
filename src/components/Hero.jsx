@@ -42,7 +42,7 @@ export default function Hero() {
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-12 lg:py-0">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--color-bg-primary)]/50 to-[var(--color-bg-primary)] z-[1]" />
+        {/* Particle Network on top of Global Background */}
         <ParticleNetwork />
         
         {/* Floating Tech Icons Background */}

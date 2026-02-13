@@ -48,10 +48,12 @@ export default function About() {
 
       <div className="max-w-5xl mx-auto relative z-10">
         <FadeInUp>
-          <div className="flex items-center gap-4 mb-8">
-            <span className="text-sm font-mono font-bold text-[var(--color-accent)]">01.</span>
-            <span className="text-xl font-bold font-heading">À Propos</span>
-            <div className="h-px bg-[var(--color-border)] flex-grow opacity-50"></div>
+          <div className="flex flex-col items-start md:items-center mb-12 text-left md:text-center w-full">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-mono font-medium border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)] mb-4">
+              &lt;About /&gt;
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 tracking-tight">Introduction</h2>
+            <div className="h-1 w-20 bg-[var(--color-accent)] rounded-full hidden md:block"></div>
           </div>
         </FadeInUp>
 

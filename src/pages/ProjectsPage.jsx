@@ -64,41 +64,41 @@ export default function ProjectsPage() {
                 variants={staggerItem}
                 layout
                 onClick={() => setSelected(project)}
-                className="group relative bg-white rounded-3xl overflow-hidden border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors duration-300 cursor-pointer h-full flex flex-col shadow-sm hover:shadow-xl hover:shadow-[var(--color-accent)]/10"
+                className="group relative rounded-3xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl hover:bg-white/60 hover:shadow-xl hover:shadow-[var(--color-accent)]/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer h-full flex flex-col shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-accent)]/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none" />
                 
                 <div className="p-8 flex flex-col h-full relative z-10">
                   <div className="flex justify-between items-start mb-6">
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.slice(0, 3).map(tech => (
-                        <span key={tech} className="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]">
+                        <span key={tech} className="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-white/50 text-[var(--color-text-secondary)] border border-[var(--color-border)]/50">
                           {tech}
                         </span>
                       ))}
                     </div>
                     {project.featured && (
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-400/20 text-yellow-600">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100/50 text-yellow-600 border border-yellow-200 shadow-sm">
                         <Star size={16} fill="currentColor" />
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-[var(--color-accent)] transition-colors"
+                  <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-[var(--color-accent)] transition-colors text-[var(--color-text-primary)]"
                     style={{ '--color-accent': accent }}>
                     {project.title}
                   </h3>
                   
-                  <p className="text-[var(--color-text-secondary)] mb-6 line-clamp-3 flex-grow leading-relaxed">
+                  <p className="text-[var(--color-text-secondary)] mb-6 line-clamp-3 flex-grow leading-relaxed font-medium">
                     {project.description}
                   </p>
 
-                  <div className="pt-6 border-t border-[var(--color-border-light)] flex items-center justify-between mt-auto">
+                  <div className="pt-6 border-t border-[var(--color-border)]/30 flex items-center justify-between mt-auto">
                      <div className="flex flex-col gap-1">
                         <span className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">Client</span>
-                        <span className="text-sm font-semibold">{project.client || 'Confidentiel'}</span>
+                        <span className="text-sm font-semibold text-[var(--color-text-primary)]">{project.client || 'Confidentiel'}</span>
                      </div>
-                     <div className="w-10 h-10 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300 transform group-hover:-rotate-45">
+                     <div className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300 transform group-hover:-rotate-45 shadow-sm border border-white/50">
                        <ArrowRight size={18} />
                      </div>
                   </div>
