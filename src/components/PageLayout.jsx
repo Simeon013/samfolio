@@ -5,7 +5,7 @@ import ScrollToTop from './ScrollToTop';
 
 export default function PageLayout({ children, title, subtitle, showParticles = false }) {
   return (
-    <div className="w-full max-w-full overflow-x-clip bg-[var(--color-bg-primary)] min-h-screen pt-20 flex flex-col">
+    <div className="w-full max-w-full overflow-x-clip bg-[var(--color-bg-primary)] min-h-screen pt-14 flex flex-col">
       <ScrollToTop />
       <Navbar />
       
