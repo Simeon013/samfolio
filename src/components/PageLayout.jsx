@@ -25,11 +25,11 @@ export default function PageLayout({ children, title, subtitle, showParticles = 
 
       <main className="flex-grow w-full relative z-10 section-padding">
         {title && (
-          <div className="max-w-7xl mx-auto px-4 mb-12 text-center">
+          <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading mb-6 text-[var(--color-text-primary)]"
+              className="text-3xl md:text-4xl font-bold font-heading mb-3 text-[var(--color-text-primary)] tracking-tight"
             >
               {title}
             </motion.h1>
@@ -38,7 +38,7 @@ export default function PageLayout({ children, title, subtitle, showParticles = 
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: 0.1 }}
-                 className="text-[var(--color-text-secondary)] max-w-2xl mx-auto text-lg font-medium"
+                 className="text-[var(--color-text-secondary)] max-w-2xl mx-auto text-base font-medium"
                >
                  {subtitle}
                </motion.p>
