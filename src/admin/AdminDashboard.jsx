@@ -61,71 +61,104 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-primary)] flex">
+    <div className="h-screen bg-[var(--color-bg-primary)] flex relative overflow-hidden font-sans">
+      {/* Global Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-bg-secondary)] via-[var(--color-bg-primary)] to-[var(--color-bg-secondary)] opacity-80" />
+          <div className="absolute inset-0 opacity-[0.03]" 
+               style={{ backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }} 
+          />
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+             <div className="absolute top-[10%] left-[5%] w-[30vw] h-[30vw] bg-[var(--color-accent)]/10 rounded-full blur-[120px] animate-blob" />
+             <div className="absolute bottom-[10%] right-[5%] w-[25vw] h-[25vw] bg-purple-500/10 rounded-full blur-[100px] animate-blob animation-delay-2000" />
+          </div>
+      </div>
+
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white border-r border-[var(--color-border)] flex flex-col transition-all duration-300 shrink-0`}>
-        <div className="p-4 border-b border-[var(--color-border)] flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white/30 backdrop-blur-xl border-r border-white/40 flex flex-col transition-all duration-300 shrink-0 relative z-20 shadow-xl`}>
+        <div className="p-5 border-b border-white/20 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-[var(--color-accent)]/20"
             style={{ backgroundColor: accent }}>S</div>
-          {sidebarOpen && <span className="font-bold text-sm truncate">Admin Panel</span>}
+          {sidebarOpen && (
+            <div className="min-w-0">
+               <span className="block font-bold text-sm text-[var(--color-text-primary)] truncate">Admin Panel</span>
+               <span className="block text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-bold">v2.0 System</span>
+            </div>
+          )}
         </div>
 
-        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {sections.map(({ id, label, icon: Icon }) => (
             <button key={id} onClick={() => setActiveSection(id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer group relative overflow-hidden ${
                 activeSection === id
-                  ? 'text-white'
-                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)]'
+                  ? 'text-white shadow-md'
+                  : 'text-[var(--color-text-secondary)] hover:bg-white/40 hover:text-[var(--color-text-primary)]'
               }`}
               style={activeSection === id ? { backgroundColor: accent } : {}}>
-              <Icon size={18} className="shrink-0" />
+              
+              {activeSection === id && (
+                 <div className="absolute inset-0 bg-white/20 animate-pulse-slow pointer-events-none" />
+              )}
+
+              <Icon size={20} className={`shrink-0 transition-transform ${activeSection === id ? 'scale-110' : 'group-hover:scale-110'}`} />
               {sidebarOpen && <span className="truncate">{label}</span>}
             </button>
           ))}
         </nav>
 
-        <div className="p-2 border-t border-[var(--color-border)] space-y-1">
+        <div className="p-3 border-t border-white/20 space-y-1 bg-white/10">
           <a href="/" target="_blank"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-all">
-            <Eye size={18} className="shrink-0" />
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--color-text-secondary)] hover:bg-white/40 transition-all">
+            <Eye size={20} className="shrink-0" />
             {sidebarOpen && <span>Voir le site</span>}
           </a>
           <button onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all cursor-pointer">
-            <LogOut size={18} className="shrink-0" />
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all cursor-pointer">
+            <LogOut size={20} className="shrink-0" />
             {sidebarOpen && <span>Déconnexion</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b border-[var(--color-border)] px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] cursor-pointer">
-              <LayoutDashboard size={18} />
+      <main className="flex-1 overflow-y-auto relative z-10">
+        <header className="sticky top-0 z-30 bg-white/30 backdrop-blur-xl border-b border-white/40 px-8 py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-xl hover:bg-white/40 cursor-pointer text-[var(--color-text-secondary)] transition-colors">
+              <LayoutDashboard size={20} />
             </button>
-            <h1 className="text-lg font-bold">
-              {sections.find(s => s.id === activeSection)?.label}
+            <h1 className="text-xl font-bold font-heading text-[var(--color-text-primary)] flex items-center gap-2">
+               {sections.find(s => s.id === activeSection)?.icon && (
+                  <span className="p-1.5 rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                    {(() => {
+                        const Icon = sections.find(s => s.id === activeSection)?.icon;
+                        return <Icon size={18} />;
+                    })()}
+                  </span>
+               )}
+               {sections.find(s => s.id === activeSection)?.label}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {saved && (
-              <span className="text-sm text-emerald-600 font-medium animate-pulse">✓ Sauvegardé</span>
+              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 animate-in fade-in slide-in-from-top-2">
+                 <Save size={12} /> Sauvegardé
+              </span>
             )}
+            <div className="h-6 w-px bg-white/40 mx-1" />
             <button onClick={exportData}
-              className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] cursor-pointer" title="Exporter">
-              <Download size={18} />
+              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Exporter JSON">
+              <Download size={20} />
             </button>
             <button onClick={handleImport}
-              className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] cursor-pointer" title="Importer">
-              <FileUp size={18} />
+              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Importer JSON">
+              <FileUp size={20} />
             </button>
           </div>
         </header>
 
-        <div className="p-6 max-w-4xl">
+        <div className="p-6 md:p-10 max-w-5xl mx-auto pb-32">
           {activeSection === 'hero' && <HeroEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
           {activeSection === 'about' && <AboutEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
           {activeSection === 'skills' && <SkillsEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
@@ -145,10 +178,10 @@ export default function AdminDashboard() {
 function Field({ label, value, onChange, type = 'text', placeholder, textarea, rows = 3 }) {
   const Tag = textarea ? 'textarea' : 'input';
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">{label}</label>
+    <div className="mb-5">
+      <label className="block text-[10px] font-bold text-[var(--color-text-secondary)] uppercase tracking-wider mb-2 ml-1">{label}</label>
       <Tag type={type} value={value || ''} onChange={(e) => onChange(e.target.value)} rows={textarea ? rows : undefined}
-        className="w-full px-4 py-2.5 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-sm focus:outline-none transition-colors resize-none"
+        className="w-full px-4 py-3 rounded-xl bg-white/50 border border-white/30 text-sm focus:outline-none focus:bg-white/80 focus:border-[var(--color-accent)]/50 focus:ring-4 focus:ring-[var(--color-accent)]/10 transition-all resize-none placeholder:text-[var(--color-text-muted)]/50"
         placeholder={placeholder} />
     </div>
   );
@@ -156,9 +189,18 @@ function Field({ label, value, onChange, type = 'text', placeholder, textarea, r
 
 function Card({ children, title, className = '' }) {
   return (
-    <div className={`bg-white rounded-2xl border border-[var(--color-border)] p-6 mb-4 ${className}`}>
-      {title && <h3 className="text-sm font-bold text-[var(--color-text-secondary)] mb-4">{title}</h3>}
-      {children}
+    <div className={`bg-white/30 backdrop-blur-xl border border-white/40 shadow-xl rounded-[2rem] p-6 mb-6 relative overflow-hidden ${className}`}>
+      {/* Decorative gradient match */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-30 pointer-events-none" />
+      <div className="relative z-10">
+         {title && (
+           <h3 className="text-lg font-bold font-heading text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+             <div className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" /> 
+             {title}
+           </h3>
+         )}
+         {children}
+      </div>
     </div>
   );
 }
@@ -166,9 +208,9 @@ function Card({ children, title, className = '' }) {
 function SaveBtn({ onClick, accent }) {
   return (
     <button onClick={onClick}
-      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold cursor-pointer transition-all hover:shadow-lg"
+      className="flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-[var(--color-accent)]/20 hover:-translate-y-0.5 active:translate-y-0"
       style={{ backgroundColor: accent }}>
-      <Save size={16} /> Sauvegarder
+      <Save size={18} /> Sauvegarder
     </button>
   );
 }
@@ -243,12 +285,12 @@ function AboutEditor({ data, updateSection, accent, onSave }) {
         ))}
       </Card>
       <Card title="Soft Skills">
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-4">
           {local.softSkills.map((s, i) => (
-            <span key={i} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-bg-secondary)] text-sm">
+            <span key={i} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/40 border border-white/40 text-sm font-medium group">
               {s}
               <button onClick={() => setLocal({ ...local, softSkills: local.softSkills.filter((_, j) => j !== i) })}
-                className="ml-1 text-[var(--color-text-muted)] hover:text-red-500 cursor-pointer"><Trash2 size={12} /></button>
+                className="ml-1 text-[var(--color-text-muted)] group-hover:text-red-500 cursor-pointer transition-colors"><Trash2 size={12} /></button>
             </span>
           ))}
         </div>
