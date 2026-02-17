@@ -18,8 +18,8 @@ export default function PageLayout({ children, title, subtitle, showParticles = 
           />
           {/* Blobs */}
           <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-             <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] bg-[var(--color-accent)]/10 rounded-full blur-[120px] animate-blob" />
-             <div className="absolute bottom-[20%] right-[10%] w-[25vw] h-[25vw] bg-purple-500/10 rounded-full blur-[100px] animate-blob animation-delay-2000" />
+             <div className="absolute top-[10%] left-[20%] w-[30vw] h-[30vw] bg-[var(--color-accent)]/10 rounded-full blur-[80px] md:blur-[120px] animate-blob will-change-transform transform-gpu" />
+             <div className="absolute bottom-[20%] right-[10%] w-[25vw] h-[25vw] bg-purple-500/10 rounded-full blur-[60px] md:blur-[100px] animate-blob animation-delay-2000 will-change-transform transform-gpu" />
           </div>
       </div>
 

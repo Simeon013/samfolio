@@ -7,17 +7,24 @@ export default function ParticleNetwork() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true }); // optimize context
     let animId;
     let particles = [];
-    const PARTICLE_COUNT = 80;
-    const MAX_DIST = 150;
+    
+    // Performance Optimization: Check device capabilities
+    const isMobile = window.innerWidth < 768;
+    const PARTICLE_COUNT = isMobile ? 30 : 80; // Drastically reduce particles on mobile
+    const MAX_DIST = isMobile ? 100 : 150;
+    
     let mouse = { x: null, y: null };
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      // Performance Optimization: Cap pixel ratio to 1 for high-DPI screens to prevent massive canvases
+      // The visual difference for these faint particles is minimal, but performance gain is massive.
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5); 
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.scale(dpr, dpr);
     };
 
     const createParticles = () => {
@@ -28,8 +35,8 @@ export default function ParticleNetwork() {
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
+          vx: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.5), // Slower movement on mobile for stability
+          vy: (Math.random() - 0.5) * (isMobile ? 0.3 : 0.5),
           r: Math.random() * 2 + 1,
         });
       }
@@ -102,15 +109,25 @@ export default function ParticleNetwork() {
     createParticles();
     draw();
 
-    window.addEventListener('resize', () => { resize(); createParticles(); });
+    let resizeTimeout;
+    const handleResize = () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            resize();
+            createParticles();
+        }, 200);
+    }
+
+    window.addEventListener('resize', handleResize);
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseleave', handleMouseLeave);
+      clearTimeout(resizeTimeout);
     };
   }, []);
 
