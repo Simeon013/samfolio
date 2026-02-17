@@ -13,10 +13,10 @@ export default function Footer() {
         {/* Left: System Status */}
         <div className="flex items-center gap-3">
              <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 rounded text-[9px] font-mono text-green-600 font-bold uppercase tracking-wider">
-                 <Activity size={10} /> System Online
+                 <Activity size={10} /> Système En Ligne
              </div>
              <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-500/10 border border-blue-500/20 rounded text-[9px] font-mono text-blue-600 font-bold uppercase tracking-wider">
-                 <ShieldCheck size={10} /> Secure
+                 <ShieldCheck size={10} /> Sécurisé
              </div>
         </div>
 
@@ -30,9 +30,9 @@ export default function Footer() {
           <span className="flex items-center gap-1 opacity-70 hover:opacity-100 transition-opacity cursor-help">
             <GitBranch size={10} /> main_branch
           </span>
-          <span className="flex items-center gap-1 opacity-70">
-             Build with <Heart size={10} style={{ color: accent }} fill={accent} /> in France
-          </span>
+           <span className="flex items-center gap-1 opacity-70">
+              Fait avec <Heart size={10} style={{ color: accent }} fill={accent} />
+           </span>
         </div>
       </div>
     </footer>
