@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, User, Star, X, ExternalLink, ArrowRight } from 'lucide-react';
+import { Calendar, User, Star, X, ArrowRight, Layers, Tag, ExternalLink, SlidersHorizontal } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import { FadeInUp, StaggerContainer, staggerItem } from '../components/AnimationWrappers';
 import { usePortfolioData } from '../hooks/usePortfolioData';
@@ -11,180 +11,261 @@ export default function ProjectsPage() {
   const accent = data.settings?.accentColor || '#0066FF';
   const [selected, setSelected] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const allTags = [...new Set(projects.flatMap(p => p.tags))];
-  const filtered = filter === 'all' ? projects : projects.filter(p => p.tags.includes(filter));
+  // Extract unique tags for filter
+  const allTags = ['all', ...new Set(projects.flatMap(p => p.tags))];
+  
+  const filteredProjects = filter === 'all' 
+    ? projects 
+    : projects.filter(p => p.tags.includes(filter));
 
   return (
     <PageLayout
-      title="Toutes mes Réalisations"
-      subtitle="Une vue d'ensemble de mes projets, défis techniques et solutions déployées."
+      title="Projets & Réalisations"
+      subtitle="Une sélection de mes missions techniques et déploiements d'infrastructures."
     >
-          <FadeInUp delay={0.1}>
-            <div className="flex flex-wrap justify-center gap-2 mb-16">
-              <button onClick={() => setFilter('all')}
-                className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                  filter === 'all' ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' : 'bg-white/80 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-                }`} style={filter === 'all' ? { backgroundColor: accent } : {}}>
-                Tous
-              </button>
-              {allTags.map(tag => (
-                <button key={tag} onClick={() => setFilter(tag)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all cursor-pointer border hover:-translate-y-0.5 ${
-                    filter === tag ? 'border-transparent text-white shadow-lg shadow-[var(--color-accent)]/20' : 'bg-white/80 border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]'
-                  }`} style={filter === tag ? { backgroundColor: accent } : {}}>
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </FadeInUp>
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pb-20">
+        
+        {/* Filter Bar */}
+        {/* Grid Header & Controls */}
+        <div className="flex flex-col mb-8">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                 <div className="flex items-center gap-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                        <Layers size={14} />
+                    </span>
+                    <h2 className="text-base md:text-lg font-bold text-[var(--color-text-primary)]">
+                        {filter === 'all' ? 'Toutes les réalisations' : filter}
+                        <span className="ml-2 text-[10px] font-medium text-[var(--color-text-muted)] bg-white/10 px-1.5 py-0.5 rounded-full">
+                            {filteredProjects.length}
+                        </span>
+                    </h2>
+                 </div>
 
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.08}>
-            {filtered.map((project) => (
+                 <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-[10px] font-bold uppercase tracking-wider ${
+                        showFilters 
+                        ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white shadow-md shadow-[var(--color-accent)]/20' 
+                        : 'bg-white/5 border-white/10 text-[var(--color-text-secondary)] hover:bg-white/10 hover:border-white/20'
+                    }`}
+                >
+                    <SlidersHorizontal size={12} />
+                    <span className="hidden sm:inline">Filtres</span>
+                 </button>
+            </div>
+
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div 
+                        initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                        animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                        exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <div className="p-1">
+                            <div className="flex flex-wrap gap-2">
+                                {allTags.map(tag => (
+                                <button
+                                    key={tag}
+                                    onClick={() => { setFilter(tag); }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border ${
+                                    filter === tag 
+                                        ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white shadow-md' 
+                                        : 'bg-white/5 border-white/10 text-[var(--color-text-secondary)] hover:bg-white/10 hover:border-white/20'
+                                    }`}
+                                >
+                                    {tag === 'all' ? 'Tout voir' : tag}
+                                </button>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+
+        {/* Projects Grid */}
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" stagger={0.08}>
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
-                variants={staggerItem}
                 layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
                 onClick={() => setSelected(project)}
-                className="group relative rounded-3xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl hover:bg-white/60 hover:shadow-xl hover:shadow-[var(--color-accent)]/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer h-full flex flex-col shadow-lg"
+                className="group relative h-full cursor-pointer"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none" />
-                
-                <div className="p-8 flex flex-col h-full relative z-10">
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex flex-wrap gap-2">
-                       {/* Mobile-first tag size optimization */}
-                      {project.technologies.slice(0, 3).map(tech => (
-                        <span key={tech} className="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-white/50 text-[var(--color-text-secondary)] border border-[var(--color-border)]/50">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                    {project.featured && (
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100/50 text-yellow-600 border border-yellow-200 shadow-sm">
-                        <Star size={16} fill="currentColor" />
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-[var(--color-accent)] transition-colors text-[var(--color-text-primary)]"
-                    style={{ '--color-accent': accent }}>
-                    {project.title}
-                  </h3>
+                <div className="h-full bg-white/30 backdrop-blur-xl border border-white/40 rounded-[1.5rem] overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:bg-white/40 hover:-translate-y-1 flex flex-col">
                   
-                  <p className="text-[var(--color-text-secondary)] mb-6 line-clamp-3 flex-grow leading-relaxed font-medium">
-                    {project.description}
-                  </p>
+                  {/* Card Header Effect */}
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  <div className="pt-6 border-t border-[var(--color-border)]/30 flex items-center justify-between mt-auto">
-                     <div className="flex flex-col gap-1">
-                        <span className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wider">Client</span>
-                        <span className="text-sm font-semibold text-[var(--color-text-primary)]">{project.client || 'Confidentiel'}</span>
-                     </div>
-                     <div className="w-10 h-10 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300 transform group-hover:-rotate-45 shadow-sm border border-white/50">
-                       <ArrowRight size={18} />
-                     </div>
+                  <div className="p-4 md:p-5 flex flex-col h-full relative z-10">
+                    
+                    {/* Top Row: Tags & Featured */}
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {project.technologies.slice(0, 3).map(tech => (
+                          <span key={tech} className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-[var(--color-accent)]/5 text-[var(--color-accent)] border border-[var(--color-accent)]/10">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      {project.featured && (
+                         <div className="p-1 rounded-full bg-yellow-400/10 text-yellow-600 border border-yellow-400/20 shadow-sm">
+                           <Star size={10} fill="currentColor" />
+                         </div>
+                      )}
+                    </div>
+
+                    {/* Title & Client */}
+                    <div className="mb-3">
+                       <h3 className="text-base font-bold font-heading text-[var(--color-text-primary)] mb-0.5 leading-tight group-hover:text-[var(--color-accent)] transition-colors">
+                         {project.title}
+                       </h3>
+                       <p className="text-[10px] font-medium text-[var(--color-text-muted)] flex items-center gap-1">
+                         <User size={10} />
+                         {project.client}
+                       </p>
+                    </div>
+
+                    {/* Description (Truncated) */}
+                    <p className="text-[11px] md:text-xs text-[var(--color-text-secondary)] line-clamp-3 mb-4 flex-grow leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    {/* Footer Row */}
+                    <div className="pt-4 border-t border-white/10 mt-auto flex items-center justify-between">
+                       <div className="flex items-center gap-2 text-[10px] font-medium text-[var(--color-text-muted)]">
+                          <Calendar size={12} />
+                          {project.period}
+                       </div>
+                       
+                       <div className="w-8 h-8 rounded-full bg-white/50 flex items-center justify-center border border-white/40 group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300 shadow-sm">
+                          <ArrowRight size={14} className="group-hover:-rotate-45 transition-transform duration-300" />
+                       </div>
+                    </div>
+
                   </div>
                 </div>
               </motion.div>
             ))}
-          </StaggerContainer>
-
-          <AnimatePresence mode="wait">
-            {selected && (
-              <motion.div
-                key="modal-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelected(null)}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
-              >
-                <motion.div
-                  key="modal-content"
-                  initial={{ scale: 0.95, opacity: 0, y: 20, filter: 'blur(10px)' }}
-                  animate={{ scale: 1, opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ scale: 0.95, opacity: 0, y: 20, filter: 'blur(10px)' }}
-                  transition={{ type: "spring", duration: 0.5, bounce: 0.3 }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="bg-gradient-to-br from-white/70 to-white/30 backdrop-blur-2xl border border-white/40 rounded-2xl w-full max-w-xl shadow-2xl relative overflow-hidden group/modal ring-1 ring-white/20 mx-4 md:mx-0"
-                >
-                  {/* Glass Reflection Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
-                  
-                  {/* Background Decor */}
-                  <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-accent)]/20 rounded-full blur-[80px] pointer-events-none" />
-                  <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-[var(--color-accent)]/20 rounded-full blur-[80px] pointer-events-none" />
-
-                    {/* Clean Header */}
-                    <div className="h-10 border-b border-white/10 flex items-center justify-end px-4 relative z-10">
-                        <button 
-                          onClick={() => setSelected(null)} 
-                          className="w-7 h-7 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 text-[var(--color-text-primary)] transition-all"
-                        >
-                          <X size={14} />
-                        </button>
-                    </div>
-
-                  <div className="p-5 md:p-8 relative z-10 max-h-[75vh] overflow-y-auto custom-scrollbar">
-                      
-                      {/* Compact Header */}
-                      <div className="mb-4">
-                          <div className="flex items-center gap-2 mb-1">
-                            {selected?.featured && (
-                              <span className="p-1 rounded bg-yellow-400/20 text-yellow-600">
-                                <Star size={10} fill="currentColor" />
-                              </span>
-                            )}
-                            <h3 className="text-xl md:text-2xl font-bold font-heading text-[var(--color-text-primary)]">
-                              {selected?.title}
-                            </h3>
-                          </div>
-                          <p className="text-xs font-mono text-[var(--color-accent)] opacity-80">
-                            {selected?.client || 'Projet Personnel'}
-                          </p>
-                      </div>
-
-                      {/* Compact Stats */}
-                      <div className="flex gap-3 mb-4 text-xs">
-                        <div className="px-2.5 py-1.5 rounded-lg bg-white/40 border border-white/20 backdrop-blur-sm">
-                            <span className="text-[9px] uppercase text-[var(--color-text-muted)] block mb-0.5">Rôle</span>
-                            <span className="font-medium text-[var(--color-text-primary)]">{selected?.role}</span>
-                        </div>
-                        <div className="px-2.5 py-1.5 rounded-lg bg-white/40 border border-white/20 backdrop-blur-sm">
-                            <span className="text-[9px] uppercase text-[var(--color-text-muted)] block mb-0.5">Date</span>
-                            <span className="font-medium text-[var(--color-text-primary)]">{selected?.period}</span>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <div className="prose prose-sm max-w-none mb-6 text-[var(--color-text-secondary)] leading-relaxed text-xs md:text-sm">
-                        <p>{selected?.description}</p>
-                      </div>
-
-                      {/* Tags */}
-                      {selected?.technologies && (
-                          <div className="flex flex-wrap gap-1.5 mb-6">
-                            {selected.technologies.map(tech => (
-                              <span key={tech} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/30 border border-white/20 text-[var(--color-text-primary)] shadow-sm">
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                      )}
-                      
-                      {/* Simple Action */}
-                      <div className="pt-4 border-t border-white/10">
-                        <button className="w-full py-2.5 rounded-xl bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-bold text-xs tracking-wide shadow-lg shadow-[var(--color-accent)]/20 transition-all flex items-center justify-center gap-2 group/btn">
-                            <span>Voir le projet</span>
-                            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </button>
-                      </div>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
           </AnimatePresence>
+        </StaggerContainer>
+
+        {/* Modal Detail View */}
+        <AnimatePresence mode="wait">
+        {selected && (
+          <motion.div
+            key="modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
+          >
+            <motion.div
+              layoutId={selected.id}
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white/40 backdrop-blur-2xl border border-white/30 rounded-[2rem] w-full max-w-2xl shadow-2xl relative overflow-hidden flex flex-col max-h-[85vh] ring-1 ring-white/20"
+            >
+               {/* Decorative Background */}
+               <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-accent)]/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2" />
+               
+               {/* Modal Header */}
+               <div className="p-5 md:p-6 pb-0 flex justify-between items-start relative z-10">
+                  <div>
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex items-center gap-2 mb-2"
+                      >
+                         <span className="px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] font-bold border border-[var(--color-accent)]/10">
+                            {selected.tags[0]}
+                         </span>
+                         {selected.featured && (
+                            <span className="flex items-center gap-1 text-[10px] font-medium text-yellow-600 bg-yellow-50 px-1.5 py-0.5 rounded-full border border-yellow-100">
+                               <Star size={8} fill="currentColor" /> Starred
+                            </span>
+                         )}
+                      </motion.div>
+                      <h2 className="text-xl md:text-2xl font-bold font-heading text-[var(--color-text-primary)]">
+                        {selected.title}
+                      </h2>
+                      <p className="text-xs font-medium text-[var(--color-text-muted)] mt-1">
+                        {selected.client} • {selected.period}
+                      </p>
+                  </div>
+                  <button 
+                    onClick={() => setSelected(null)}
+                    className="p-1.5 rounded-full bg-black/5 hover:bg-black/10 transition-colors text-[var(--color-text-primary)]"
+                  >
+                    <X size={16} />
+                  </button>
+               </div>
+
+               {/* Modal Content - Scrollable */}
+               <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar relative z-10">
+                  
+                  <div className="grid md:grid-cols-3 gap-6 mb-6">
+                     <div className="md:col-span-2 space-y-3">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] flex items-center gap-2">
+                           <Layers size={12} /> Description
+                        </h4>
+                        <p className="text-xs md:text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                           {selected.description}
+                        </p>
+                     </div>
+                     <div className="space-y-3">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] flex items-center gap-2">
+                           <User size={12} /> Rôle
+                        </h4>
+                        <p className="text-xs font-medium text-[var(--color-text-primary)]">
+                           {selected.role}
+                        </p>
+                     </div>
+                  </div>
+
+                  <div className="space-y-3">
+                     <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--color-text-muted)] flex items-center gap-2">
+                        <Tag size={12} /> Technologies
+                     </h4>
+                     <div className="flex flex-wrap gap-1.5">
+                        {selected.technologies.map(tech => (
+                           <span key={tech} className="px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-xs font-medium text-[var(--color-text-primary)] shadow-sm">
+                              {tech}
+                           </span>
+                        ))}
+                     </div>
+                  </div>
+
+               </div>
+
+               {/* Modal Footer */}
+               <div className="p-5 border-t border-gray-100 bg-white/50 backdrop-blur-sm flex justify-end gap-3 rounded-b-[2rem]">
+                  <button onClick={() => setSelected(null)} className="px-4 py-2 rounded-xl font-medium text-xs text-[var(--color-text-secondary)] hover:bg-black/5 transition-colors">
+                     Fermer
+                  </button>
+                  <button className="px-5 py-2 rounded-xl font-bold text-xs bg-[var(--color-accent)] text-white shadow-lg shadow-[var(--color-accent)]/20 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                     Voir les détails <ExternalLink size={14} />
+                  </button>
+               </div>
+
+            </motion.div>
+          </motion.div>
+        )}
+        </AnimatePresence>
+
+      </div>
     </PageLayout>
   );
 }
