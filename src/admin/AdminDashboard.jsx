@@ -22,11 +22,31 @@ const sections = [
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, importData } = usePortfolioData();
+  const { data, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, publishToGitHub, importData } = usePortfolioData();
   const [activeSection, setActiveSection] = useState('hero');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishStatus, setPublishStatus] = useState(null); // 'success' | 'error' | 'config_missing' | null
   const accent = data.settings?.accentColor || '#0066FF';
+
+  const handlePublish = async () => {
+    setPublishing(true);
+    setPublishStatus(null);
+    const result = await publishToGitHub();
+    setPublishing(false);
+    if (result.success) {
+      setPublishStatus('success');
+      setTimeout(() => setPublishStatus(null), 4000);
+    } else if (result.error === 'config_missing') {
+      setPublishStatus('config_missing');
+      setActiveSection('settings');
+      setTimeout(() => setPublishStatus(null), 5000);
+    } else {
+      setPublishStatus('error');
+      setTimeout(() => setPublishStatus(null), 5000);
+    }
+  };
 
   useEffect(() => {
     if (!sessionStorage.getItem('samfolio_admin')) {
@@ -156,11 +176,23 @@ export default function AdminDashboard() {
               <FileUp size={20} />
             </button>
             <div className="h-6 w-px bg-white/40 mx-1" />
-            <button onClick={exportAsSourceFile}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-[var(--color-accent)]/20 hover:-translate-y-0.5"
-              style={{ backgroundColor: accent }}
-              title="Télécharger portfolioData.js prêt à déployer">
-              <Rocket size={16} /> Publier
+            <button onClick={handlePublish} disabled={publishing}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-wait ${
+                publishStatus === 'success' ? 'bg-emerald-500' : publishStatus === 'error' || publishStatus === 'config_missing' ? 'bg-red-500' : ''
+              }`}
+              style={!publishStatus ? { backgroundColor: accent } : {}}
+              title="Publier les modifications sur le site">
+              {publishing ? (
+                <><RefreshCw size={14} className="animate-spin" /> Publication...</>
+              ) : publishStatus === 'success' ? (
+                <><Save size={14} /> En ligne !</>
+              ) : publishStatus === 'config_missing' ? (
+                <><Settings size={14} /> Configurer GitHub</>
+              ) : publishStatus === 'error' ? (
+                <><Settings size={14} /> Erreur</>
+              ) : (
+                <><Rocket size={16} /> Publier</>
+              )}
             </button>
           </div>
         </header>
@@ -694,6 +726,16 @@ function SettingsEditor({ data, updateSettings, updateSection, accent, onSave, r
   const [pw, setPw] = useState('');
   const [seoLocal, setSeoLocal] = useState(data.seo);
   const [animEnabled, setAnimEnabled] = useState(data.settings?.animationsEnabled !== false);
+  const [ghToken, setGhToken] = useState(localStorage.getItem('samfolio_gh_token') || '');
+  const [ghRepo, setGhRepo] = useState(localStorage.getItem('samfolio_gh_repo') || '');
+  const [ghSaved, setGhSaved] = useState(false);
+
+  const saveGitHub = () => {
+    localStorage.setItem('samfolio_gh_token', ghToken);
+    localStorage.setItem('samfolio_gh_repo', ghRepo);
+    setGhSaved(true);
+    setTimeout(() => setGhSaved(false), 2000);
+  };
 
   const saveColor = () => { updateSettings('accentColor', color); onSave(); };
   const savePassword = () => {
@@ -704,6 +746,22 @@ function SettingsEditor({ data, updateSettings, updateSection, accent, onSave, r
 
   return (
     <>
+      <Card title="🚀 Publication GitHub (Auto-deploy)">
+        <p className="text-xs text-[var(--color-text-muted)] mb-4 leading-relaxed">
+          Connectez votre repo GitHub pour publier directement depuis l'admin. Chaque publication met à jour le site automatiquement via Vercel.
+        </p>
+        <Field label="Repository (ex: Simeon013/samfolio)" value={ghRepo} onChange={setGhRepo} placeholder="owner/repo" />
+        <Field label="Token GitHub (Personal Access Token)" value={ghToken} onChange={setGhToken} type="password" placeholder="ghp_xxxxxxxxxxxx" />
+        <p className="text-[10px] text-[var(--color-text-muted)] mb-3 leading-relaxed">
+          Créez un token sur <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noreferrer" className="underline" style={{ color: accent }}>github.com/settings/tokens</a> → Fine-grained → Sélectionnez votre repo → Permissions : Contents (Read and Write).
+        </p>
+        <button onClick={saveGitHub}
+          className="px-4 py-2 rounded-xl text-white text-sm font-medium cursor-pointer flex items-center gap-2"
+          style={{ backgroundColor: accent }}>
+          <Save size={14} /> {ghSaved ? '✓ Sauvegardé !' : 'Sauvegarder la config'}
+        </button>
+      </Card>
+
       <Card title="Couleur d'accent">
         <div className="flex items-center gap-4">
           <input type="color" value={color} onChange={(e) => setColor(e.target.value)}

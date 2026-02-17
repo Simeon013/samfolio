@@ -64,6 +64,47 @@ export function DataProvider({ children }) {
     URL.revokeObjectURL(url);
   };
 
+  const publishToGitHub = async () => {
+    const token = localStorage.getItem('samfolio_gh_token');
+    const repo = localStorage.getItem('samfolio_gh_repo'); // format: "owner/repo"
+    if (!token || !repo) {
+      return { success: false, error: 'config_missing' };
+    }
+
+    const filePath = 'src/data/portfolioData.js';
+    const jsContent = `export const defaultData = ${JSON.stringify(data, null, 2)};\n`;
+    const contentBase64 = btoa(unescape(encodeURIComponent(jsContent)));
+
+    try {
+      // 1. Get current file SHA (required by GitHub API to update)
+      const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+        headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' },
+      });
+      if (!getRes.ok) throw new Error(`Erreur GitHub: ${getRes.status}`);
+      const fileData = await getRes.json();
+
+      // 2. Update the file
+      const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `update: portfolio data (${new Date().toLocaleDateString('fr-FR')})`,
+          content: contentBase64,
+          sha: fileData.sha,
+        }),
+      });
+
+      if (!putRes.ok) throw new Error(`Erreur commit: ${putRes.status}`);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
   const importData = (jsonString) => {
     try {
       const imported = JSON.parse(jsonString);
@@ -75,7 +116,7 @@ export function DataProvider({ children }) {
   };
 
   return (
-    <DataContext.Provider value={{ data, setData, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, importData }}>
+    <DataContext.Provider value={{ data, setData, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, publishToGitHub, importData }}>
       {children}
     </DataContext.Provider>
   );
