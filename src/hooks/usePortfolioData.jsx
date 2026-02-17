@@ -6,26 +6,35 @@ const DataContext = createContext();
 const STORAGE_KEY = 'samfolio_data';
 
 export function DataProvider({ children }) {
+  const isAdmin = !!sessionStorage.getItem('samfolio_admin');
+
   const [data, setData] = useState(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        return { ...defaultData, ...parsed };
+    // Only load localStorage overrides for admin sessions
+    // Regular visitors always see the latest deployed defaultData
+    if (isAdmin) {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          return { ...defaultData, ...parsed };
+        }
+      } catch (e) {
+        console.warn('Failed to load stored data:', e);
       }
-    } catch (e) {
-      console.warn('Failed to load stored data:', e);
     }
     return defaultData;
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.warn('Failed to save data:', e);
+    // Only persist to localStorage when in admin mode
+    if (isAdmin) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('Failed to save data:', e);
+      }
     }
-  }, [data]);
+  }, [data, isAdmin]);
 
   const updateSection = (section, value) => {
     setData(prev => ({ ...prev, [section]: value }));
