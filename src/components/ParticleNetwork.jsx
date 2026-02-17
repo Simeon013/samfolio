@@ -13,8 +13,10 @@ export default function ParticleNetwork() {
     
     // Performance Optimization: Check device capabilities
     const isMobile = window.innerWidth < 768;
-    const PARTICLE_COUNT = isMobile ? 30 : 80; // Drastically reduce particles on mobile
-    const MAX_DIST = isMobile ? 100 : 150;
+    if (isMobile) return; // Disable entirely on mobile for max performance
+
+    const PARTICLE_COUNT = 80;
+    const MAX_DIST = 150;
     
     let mouse = { x: null, y: null };
 

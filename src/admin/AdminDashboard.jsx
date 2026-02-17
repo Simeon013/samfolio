@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Type, UserCircle, Wrench, FolderKanban, Award,
   Briefcase, GraduationCap, Mail, Settings, LogOut, Save, Plus,
   Trash2, GripVertical, ChevronDown, ChevronRight, Upload, Eye,
-  Palette, Globe, RefreshCw, Download, FileUp
+  Palette, Globe, RefreshCw, Download, FileUp, Rocket
 } from 'lucide-react';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
@@ -22,7 +22,7 @@ const sections = [
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { data, updateSection, updateSettings, resetData, exportData, importData } = usePortfolioData();
+  const { data, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, importData } = usePortfolioData();
   const [activeSection, setActiveSection] = useState('hero');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -148,12 +148,19 @@ export default function AdminDashboard() {
             )}
             <div className="h-6 w-px bg-white/40 mx-1" />
             <button onClick={exportData}
-              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Exporter JSON">
+              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Exporter JSON (backup)">
               <Download size={20} />
             </button>
             <button onClick={handleImport}
               className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Importer JSON">
               <FileUp size={20} />
+            </button>
+            <div className="h-6 w-px bg-white/40 mx-1" />
+            <button onClick={exportAsSourceFile}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:shadow-lg hover:shadow-[var(--color-accent)]/20 hover:-translate-y-0.5"
+              style={{ backgroundColor: accent }}
+              title="Télécharger portfolioData.js prêt à déployer">
+              <Rocket size={16} /> Publier
             </button>
           </div>
         </header>

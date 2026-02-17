@@ -53,6 +53,17 @@ export function DataProvider({ children }) {
     URL.revokeObjectURL(url);
   };
 
+  const exportAsSourceFile = () => {
+    const jsContent = `export const defaultData = ${JSON.stringify(data, null, 2)};\n`;
+    const blob = new Blob([jsContent], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'portfolioData.js';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const importData = (jsonString) => {
     try {
       const imported = JSON.parse(jsonString);
@@ -64,7 +75,7 @@ export function DataProvider({ children }) {
   };
 
   return (
-    <DataContext.Provider value={{ data, setData, updateSection, updateSettings, resetData, exportData, importData }}>
+    <DataContext.Provider value={{ data, setData, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, importData }}>
       {children}
     </DataContext.Provider>
   );

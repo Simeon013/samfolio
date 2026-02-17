@@ -32,7 +32,7 @@ export default function Navbar() {
         className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[90%]"
       >
         {/* Desktop Pill */}
-        <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full nav-pill shadow-lg shadow-black/5 bg-white/90 backdrop-blur-md border border-white/20">
+        <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full nav-pill shadow-lg shadow-black/5 bg-white/60 backdrop-blur-md border border-white/20">
           {navLinks.map(({ path, label, icon: Icon }) => {
             const isActive = isActiveLink(path);
             return (
@@ -52,7 +52,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Pill */}
-        <div className="md:hidden flex items-center justify-between p-2 rounded-full nav-pill shadow-lg shadow-black/5 min-w-[280px] bg-white/90 backdrop-blur-md border border-white/20">
+        <div className="md:hidden flex items-center justify-between p-2 rounded-full nav-pill shadow-lg shadow-black/5 min-w-[280px] bg-white/60 backdrop-blur-md border border-white/20">
            <Link to="/" className="pl-4 font-bold text-lg tracking-tight flex items-center gap-1" style={{fontFamily: 'var(--font-heading)'}}>
              S.G<span style={{color: accent}}>.</span>
            </Link>
@@ -74,7 +74,7 @@ export default function Navbar() {
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="fixed inset-x-4 top-24 z-40 md:hidden bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden ring-1 ring-white/10"
+            className="fixed inset-x-4 top-24 z-40 md:hidden bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden ring-1 ring-white/10"
           >
             <div className="p-4 grid grid-cols-2 gap-2">
               {navLinks.map(({ path, label, icon: Icon }) => {
