@@ -70,33 +70,43 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="fixed inset-x-4 top-24 z-40 md:hidden bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden ring-1 ring-white/10"
-          >
-            <div className="p-4 grid grid-cols-2 gap-2">
-              {navLinks.map(({ path, label, icon: Icon }) => {
-                const isActive = isActiveLink(path);
-                return (
-                    <Link
-                    key={path}
-                    to={path}
-                    onClick={() => setMobileOpen(false)}
-                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all ${
-                        isActive
-                        ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] font-bold shadow-inner'
-                        : 'hover:bg-black/5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                    }`}
-                    >
-                    <Icon size={24} style={isActive ? { color: accent } : { opacity: 0.5 }} />
-                    <span className="text-sm">{label}</span>
-                    </Link>
-                );
-              })}
-            </div>
-          </motion.div>
+          <>
+            {/* Invisible backdrop to close on tap outside */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="fixed inset-0 z-30 md:hidden"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="fixed inset-x-4 top-24 z-40 md:hidden bg-white/20 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 overflow-hidden ring-1 ring-white/10"
+            >
+              <div className="p-4 grid grid-cols-2 gap-2">
+                {navLinks.map(({ path, label, icon: Icon }) => {
+                  const isActive = isActiveLink(path);
+                  return (
+                      <Link
+                      key={path}
+                      to={path}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all ${
+                          isActive
+                          ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)] font-bold shadow-inner'
+                          : 'hover:bg-black/5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                      }`}
+                      >
+                      <Icon size={24} style={isActive ? { color: accent } : { opacity: 0.5 }} />
+                      <span className="text-sm">{label}</span>
+                      </Link>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>

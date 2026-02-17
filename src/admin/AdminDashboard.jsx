@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Type, UserCircle, Wrench, FolderKanban, Award,
   Briefcase, GraduationCap, Mail, Settings, LogOut, Save, Plus,
   Trash2, GripVertical, ChevronDown, ChevronRight, Upload, Eye,
-  Palette, Globe, RefreshCw, Download, FileUp, Rocket
+  Palette, Globe, RefreshCw, Download, FileUp, Rocket, Menu, X
 } from 'lucide-react';
 import { usePortfolioData } from '../hooks/usePortfolioData';
 
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { data, updateSection, updateSettings, resetData, exportData, exportAsSourceFile, publishToGitHub, importData } = usePortfolioData();
   const [activeSection, setActiveSection] = useState('hero');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState(null); // 'success' | 'error' | 'config_missing' | null
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="h-screen bg-[var(--color-bg-primary)] flex relative overflow-hidden font-sans">
+    <div className="h-screen bg-[var(--color-bg-primary)] flex flex-col md:flex-row relative overflow-hidden font-sans">
       {/* Global Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-bg-secondary)] via-[var(--color-bg-primary)] to-[var(--color-bg-secondary)] opacity-80" />
@@ -94,22 +94,37 @@ export default function AdminDashboard() {
           </div>
       </div>
 
+      {/* Mobile Sidebar Backdrop */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/30 z-20 md:hidden"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white/30 backdrop-blur-xl border-r border-white/40 flex flex-col transition-all duration-300 shrink-0 relative z-20 shadow-xl`}>
+      <aside className={`
+        fixed md:relative inset-y-0 left-0 z-30
+        ${sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full md:translate-x-0 md:w-20'}
+        bg-white/30 backdrop-blur-xl border-r border-white/40
+        flex flex-col transition-all duration-300 shrink-0 shadow-xl
+      `}>
         <div className="p-5 border-b border-white/20 flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg font-bold shrink-0 shadow-lg shadow-[var(--color-accent)]/20"
             style={{ backgroundColor: accent }}>S</div>
-          {sidebarOpen && (
-            <div className="min-w-0">
-               <span className="block font-bold text-sm text-[var(--color-text-primary)] truncate">Admin Panel</span>
-               <span className="block text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-bold">v2.0 System</span>
-            </div>
-          )}
+          <div className="min-w-0">
+             <span className="block font-bold text-sm text-[var(--color-text-primary)] truncate">Admin Panel</span>
+             <span className="block text-[10px] text-[var(--color-text-secondary)] uppercase tracking-wider font-bold">v2.0 System</span>
+          </div>
+          {/* Close button on mobile */}
+          <button onClick={() => setSidebarOpen(false)} className="ml-auto md:hidden p-1 rounded-lg hover:bg-white/40 cursor-pointer">
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {sections.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setActiveSection(id)}
+            <button key={id} onClick={() => { setActiveSection(id); if (window.innerWidth < 768) setSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer group relative overflow-hidden ${
                 activeSection === id
                   ? 'text-white shadow-md'
@@ -122,7 +137,7 @@ export default function AdminDashboard() {
               )}
 
               <Icon size={20} className={`shrink-0 transition-transform ${activeSection === id ? 'scale-110' : 'group-hover:scale-110'}`} />
-              {sidebarOpen && <span className="truncate">{label}</span>}
+              <span className="truncate">{label}</span>
             </button>
           ))}
         </nav>
@@ -131,73 +146,73 @@ export default function AdminDashboard() {
           <a href="/" target="_blank"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[var(--color-text-secondary)] hover:bg-white/40 transition-all">
             <Eye size={20} className="shrink-0" />
-            {sidebarOpen && <span>Voir le site</span>}
+            <span>Voir le site</span>
           </a>
           <button onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all cursor-pointer">
             <LogOut size={20} className="shrink-0" />
-            {sidebarOpen && <span>Déconnexion</span>}
+            <span>Déconnexion</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative z-10">
-        <header className="sticky top-0 z-30 bg-white/30 backdrop-blur-xl border-b border-white/40 px-8 py-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-xl hover:bg-white/40 cursor-pointer text-[var(--color-text-secondary)] transition-colors">
-              <LayoutDashboard size={20} />
+        <header className="sticky top-0 z-20 bg-white/30 backdrop-blur-xl border-b border-white/40 px-4 md:px-8 py-3 md:py-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2 md:gap-4 min-w-0">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-xl hover:bg-white/40 cursor-pointer text-[var(--color-text-secondary)] transition-colors shrink-0">
+              <Menu size={20} />
             </button>
-            <h1 className="text-xl font-bold font-heading text-[var(--color-text-primary)] flex items-center gap-2">
+            <h1 className="text-base md:text-xl font-bold font-heading text-[var(--color-text-primary)] flex items-center gap-2 truncate">
                {sections.find(s => s.id === activeSection)?.icon && (
-                  <span className="p-1.5 rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                  <span className="p-1 md:p-1.5 rounded-lg bg-[var(--color-accent)]/10 text-[var(--color-accent)] shrink-0">
                     {(() => {
                         const Icon = sections.find(s => s.id === activeSection)?.icon;
-                        return <Icon size={18} />;
+                        return <Icon size={16} />;
                     })()}
                   </span>
                )}
-               {sections.find(s => s.id === activeSection)?.label}
+               <span className="truncate">{sections.find(s => s.id === activeSection)?.label}</span>
             </h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 md:gap-3 shrink-0">
             {saved && (
-              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 animate-in fade-in slide-in-from-top-2">
+              <span className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-emerald-600 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
                  <Save size={12} /> Sauvegardé
               </span>
             )}
-            <div className="h-6 w-px bg-white/40 mx-1" />
+            <div className="hidden md:block h-6 w-px bg-white/40 mx-1" />
             <button onClick={exportData}
-              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Exporter JSON (backup)">
+              className="hidden md:block p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Exporter JSON (backup)">
               <Download size={20} />
             </button>
             <button onClick={handleImport}
-              className="p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Importer JSON">
+              className="hidden md:block p-2.5 rounded-xl hover:bg-white/40 text-[var(--color-text-secondary)] cursor-pointer hover:text-[var(--color-accent)] transition-all" title="Importer JSON">
               <FileUp size={20} />
             </button>
-            <div className="h-6 w-px bg-white/40 mx-1" />
+            <div className="hidden md:block h-6 w-px bg-white/40 mx-1" />
             <button onClick={handlePublish} disabled={publishing}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-wait ${
+              className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-xl text-white text-xs font-bold cursor-pointer transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-wait ${
                 publishStatus === 'success' ? 'bg-emerald-500' : publishStatus === 'error' || publishStatus === 'config_missing' ? 'bg-red-500' : ''
               }`}
               style={!publishStatus ? { backgroundColor: accent } : {}}
               title="Publier les modifications sur le site">
               {publishing ? (
-                <><RefreshCw size={14} className="animate-spin" /> Publication...</>
+                <><RefreshCw size={14} className="animate-spin" /> <span className="hidden sm:inline">Publication...</span></>
               ) : publishStatus === 'success' ? (
-                <><Save size={14} /> En ligne !</>
+                <><Save size={14} /> <span className="hidden sm:inline">En ligne !</span></>
               ) : publishStatus === 'config_missing' ? (
-                <><Settings size={14} /> Configurer GitHub</>
+                <><Settings size={14} /> <span className="hidden sm:inline">Configurer</span></>
               ) : publishStatus === 'error' ? (
-                <><Settings size={14} /> Erreur</>
+                <><Settings size={14} /> <span className="hidden sm:inline">Erreur</span></>
               ) : (
-                <><Rocket size={16} /> Publier</>
+                <><Rocket size={16} /> <span className="hidden sm:inline">Publier</span></>
               )}
             </button>
           </div>
         </header>
 
-        <div className="p-6 md:p-10 max-w-5xl mx-auto pb-32">
+        <div className="p-4 md:p-10 max-w-5xl mx-auto pb-32">
           {activeSection === 'hero' && <HeroEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
           {activeSection === 'about' && <AboutEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
           {activeSection === 'skills' && <SkillsEditor data={data} updateSection={updateSection} accent={accent} onSave={showSaved} />}
