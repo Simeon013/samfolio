@@ -211,30 +211,28 @@
   animation: scan-line 1.5s ease-out forwards;
 }
 
-/* ===== MOBILE PERFORMANCE: Disable expensive GPU effects ===== */
+/* ===== MOBILE PERFORMANCE: Lighten GPU effects without breaking DA ===== */
 @media (max-width: 767px) {
-  /* Kill all backdrop-blur on mobile - biggest performance culprit */
-  * {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
+  /* Reduce backdrop-blur intensity (keep the effect, just lighter) */
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  .backdrop-blur-2xl {
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
   }
 
-  /* Freeze blob animations */
+  /* Slow down blob animations instead of removing them */
   .animate-blob {
-    animation: none !important;
+    animation-duration: 20s !important;
   }
 
-  /* Disable mix-blend-multiply (forces compositing) */
-  .mix-blend-multiply {
-    mix-blend-mode: normal !important;
-  }
-
-  /* Reduce large box blurs */
+  /* Reduce large decorative blurs */
   [class*="blur-[80px]"],
   [class*="blur-[100px]"],
   [class*="blur-[120px]"] {
-    filter: blur(30px) !important;
-    opacity: 0.15 !important;
+    filter: blur(40px) !important;
   }
 }
 
