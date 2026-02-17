@@ -211,6 +211,33 @@
   animation: scan-line 1.5s ease-out forwards;
 }
 
+/* ===== MOBILE PERFORMANCE: Disable expensive GPU effects ===== */
+@media (max-width: 767px) {
+  /* Kill all backdrop-blur on mobile - biggest performance culprit */
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Freeze blob animations */
+  .animate-blob {
+    animation: none !important;
+  }
+
+  /* Disable mix-blend-multiply (forces compositing) */
+  .mix-blend-multiply {
+    mix-blend-mode: normal !important;
+  }
+
+  /* Reduce large box blurs */
+  [class*="blur-[80px]"],
+  [class*="blur-[100px]"],
+  [class*="blur-[120px]"] {
+    filter: blur(30px) !important;
+    opacity: 0.15 !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

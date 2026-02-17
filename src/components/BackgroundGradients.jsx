@@ -1,6 +1,18 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function BackgroundGradients() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Completely skip rendering on mobile for maximum performance
+  if (isMobile) return null;
+
   return (
     <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden">
       {/* Base Layer - Light Gray/White */}
